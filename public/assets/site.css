@@ -292,7 +292,9 @@ mark { padding: 0 .2em; border-radius: 3px; background: var(--amber); color: var
 .end-title { font-size: clamp(24px, 2.6vw, 32px); font-weight: 650; letter-spacing: -.02em; }
 .end-text > p:not(.end-title) { margin-top: 8px; color: var(--dim); }
 .end-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; padding: 0; list-style: none; }
-.end-bottom { display: flex; justify-content: space-between; gap: 12px; padding-block: 22px 28px; border-top: 1px solid var(--line); color: var(--dim); font-size: 14px; }
+.end-bottom { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-block: 22px 28px; border-top: 1px solid var(--line); color: var(--dim); font-size: 14px; }
+.end-source { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.end-source:hover, .end-source:focus-visible { color: var(--fg); text-decoration-color: currentColor; }
 /* 404 page */
 .lost { display: grid; align-items: center; min-height: calc(100vh - 72px); min-height: calc(100dvh - 72px); }
 .lost-code { color: var(--amber); font: 600 clamp(56px, 9vw, 112px)/1 var(--mono); letter-spacing: -.04em; }
