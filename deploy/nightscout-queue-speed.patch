@@ -1,0 +1,118 @@
+--- a/shared_queue.py
++++ b/shared_queue.py
+@@ -6,32 +6,84 @@
+ from datetime import datetime, timedelta, timezone
+ from store import Store, BoundDatabase, Conflict, Denied, CATEGORIES, now
+ 
++MINIMUM_SUCCESSFUL_ANALYSES = 2
++
+ 
+ class SharedStore(Store):
+     def __init__(self,path):
+         super().__init__(path)
+-        self._counts=OrderedDict()
+-        self._counts_lock=threading.Lock()
+-
+-    def success_counts(self,c,rows):
+-        """Cache only derived analysis counts; live status and reservations are never cached."""
+-        keys={r['channel_id']:(r['channel_id'],r['latest_run_id'],r['analysis_at']) for r in rows}
+-        with self._counts_lock:
+-            stamp=time.monotonic()
+-            missing=[r for r in rows if keys[r['channel_id']] not in self._counts or self._counts[keys[r['channel_id']]][0]<=stamp]
++        self._eligibility_cache = OrderedDict()
++        self._eligibility_lock = threading.Lock()
++
++    def _analysis_eligibility(self, c, rows):
++        """Cache only analysis eligibility. Reservations and status are still read live."""
++        keys = {r["channel_id"]: (r["channel_id"], r["latest_run_id"], r["analysis_at"]) for r in rows}
++        with self._eligibility_lock:
++            stamp = time.monotonic()
++            cache = self._eligibility_cache
++            missing = [r for r in rows if cache.get(keys[r["channel_id"]], (0, False))[0] <= stamp]
+             if missing:
+-                counts=BoundDatabase(self.path,c)._batch_review_analyses(c,missing,counts_only=True)
++                eligibility = self._read_analysis_eligibility(c, missing)
++                expires = time.monotonic() + 60
+                 for r in missing:
+-                    self._counts[keys[r['channel_id']]]=(time.monotonic()+60,counts.get(r['channel_id'],0))
+-            result={cid:self._counts[key][1] for cid,key in keys.items()}
+-            for key in keys.values():self._counts.move_to_end(key)
+-            while len(self._counts)>4096:self._counts.popitem(last=False)
++                    channel_id = r["channel_id"]
++                    cache[keys[channel_id]] = (expires, eligibility[channel_id])
++            result = {cid: cache[key][1] for cid, key in keys.items()}
++            for key in keys.values():
++                cache.move_to_end(key)
++            while len(cache) > 4096:
++                cache.popitem(last=False)
+             return result
+ 
++    def _read_analysis_eligibility(self, connection, rows):
++        db = BoundDatabase(self.path, connection)
++        eligible = {}
++        runs = {}
++        legacy = []
++        for row in rows:
++            channel_id = row["channel_id"]
++            run_id = row["latest_run_id"]
++            if not run_id:
++                legacy.append(channel_id)
++                continue
++            if run_id not in runs:
++                successes = 0
++                with contextlib.closing(connection.execute(
++                    "SELECT result_json FROM video_analyses WHERE analysis_run_id=?",
++                    (run_id,),
++                )) as analyses:
++                    for analysis in analyses:
++                        successes += db._review_success_count((analysis,))
++                        if successes >= MINIMUM_SUCCESSFUL_ANALYSES:
++                            break
++                runs[run_id] = successes >= MINIMUM_SUCCESSFUL_ANALYSES
++            eligible[channel_id] = runs[run_id]
++
++        for offset in range(0, len(legacy), 500):
++            channels = legacy[offset:offset + 500]
++            placeholders = ",".join("?" for _ in channels)
++            counts = dict.fromkeys(channels, 0)
++            # Choose the latest two legacy rows before reading their JSON or filtering errors.
++            with contextlib.closing(connection.execute(f"""
++                WITH ranked AS (
++                    SELECT v.channel_id, a.id,
++                           ROW_NUMBER() OVER (PARTITION BY v.channel_id ORDER BY a.id DESC) AS position
++                    FROM video_analyses a JOIN videos v ON a.video_id=v.video_id
++                    WHERE v.channel_id IN ({placeholders})
++                )
++                SELECT ranked.channel_id, a.result_json
++                FROM ranked JOIN video_analyses a ON a.id=ranked.id
++                WHERE ranked.position<=2
++            """, channels)) as analyses:
++                for analysis in analyses:
++                    counts[analysis["channel_id"]] += db._review_success_count((analysis,))
++            eligible.update((cid, count >= MINIMUM_SUCCESSFUL_ANALYSES) for cid, count in counts.items())
++        return eligible
++
+     def warm_counts(self):
+         with contextlib.closing(self.connect()) as c:
+             rows=BoundDatabase(self.path,c)._review_channel_rows(c,"c.status='needs_review' AND c.manual_status='pending_review'",compact=True)
+-            self.success_counts(c,rows)
++            self._analysis_eligibility(c, rows)
+ 
+     def active(self, c, uid):
+         if not c.execute('SELECT 1 FROM mr_users WHERE id=? AND active=1', (uid,)).fetchone():
+@@ -46,13 +98,13 @@
+         if key in cached:return [dict(r) for r in cached[key]]
+         db = BoundDatabase(self.path, c)
+         rows = db._review_channel_rows(c, "c.status='needs_review' AND c.manual_status='pending_review'", compact=True)
+-        success = self.success_counts(c, rows)
++        eligible = self._analysis_eligibility(c, rows)
+         cutoff = (datetime.now(timezone.utc)-timedelta(minutes=30)).isoformat()
+         busy = {r['channel_id'] for r in c.execute("SELECT channel_id FROM mr_assignments WHERE user_id!=? AND state IN ('queued','proposed') AND updated_at>?", (uid, cutoff))}
+         skipped = {r['channel_id'] for r in c.execute("SELECT DISTINCT channel_id FROM mr_proposals WHERE reviewer_id=? AND decision='later'", (uid,))}
+         if boundary is not None:
+             inside = {r[0] for r in c.execute('SELECT channel_id FROM channels WHERE rowid<=?', (boundary,))}
+-        result=[dict(r) for r in rows if success.get(r['channel_id'], 0)>=2 and r['channel_id'] not in busy and r['channel_id'] not in skipped and (boundary is None or r['channel_id'] in inside)]
++        result=[dict(r) for r in rows if eligible[r['channel_id']] and r['channel_id'] not in busy and r['channel_id'] not in skipped and (boundary is None or r['channel_id'] in inside)]
+         if has_request_context():
+             cached[key]=result;g.shared_pool=cached
+         return [dict(r) for r in result]

@@ -1,0 +1,41 @@
+<div class="metrics" aria-label="Статистика обработки">
+  <div><span>На проверке</span><strong>{{ counts.queue }}</strong></div>
+  <div><span>Одобрено</span><strong>{{ counts.approved }}</strong></div>
+  {% if analyzed is not none %}<div><span>Проанализировано</span><strong>{{ analyzed }}</strong></div>{% endif %}
+</div>
+{% if worker is not none %}
+  <div class="worker">
+    <strong>Night Worker</strong>
+    {% if worker.status %}
+      <span>{{ {'running':'Запуск отмечен как активный','completed':'Завершил работу','failed':'Завершился с ошибкой','stopped':'Остановлен'}.get(worker.status, worker.status) }}</span>
+      {% if worker.finished_at or worker.started_at %}<small>{{ (worker.finished_at or worker.started_at)|tomsk_time }} (Томск)</small>{% endif %}
+    {% else %}<span>Нет записей о запусках</span>{% endif %}
+  </div>
+{% endif %}
+<nav class="filters" aria-label="Статус канала">
+  {% for name,label in scopes.items() %}
+    <a{% if name == params.status %} aria-current="page"{% endif %} href="{{ url_for('.index', status=name, q=params.q) }}">{{ label }} <span>{{ counts[name] }}</span></a>
+  {% endfor %}
+</nav>
+{% if items %}
+  <ul class="channel-list">
+    {% for item in items %}
+      <li>
+        <a href="{{ url_for('.channel_detail', channel_id=item.channel_id, **params) }}">
+          <span class="channel-icon" aria-hidden="true">{{ (item.channel_name or item.channel_id)[:1]|upper }}</span>
+          <span><strong>{{ item.channel_name or item.channel_id }}</strong><small>{{ item.channel_handle or item.channel_id }}{% if item.category %} · {{ item.category }}{% endif %}</small></span>
+          <span class="row-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="queue-empty">{% if params.q %}По этому запросу ничего не найдено.{% else %}В этом разделе пока нет каналов.{% endif %}</p>
+{% endif %}
+{% if pages > 1 or params.page > 1 %}
+  <nav class="pages" aria-label="Страницы результатов">
+    {% if params.page > 1 %}<a class="text-link" href="{{ url_for('.index', status=params.status, q=params.q, page=params.page-1) }}">← Назад</a>{% endif %}
+    <span>{{ params.page }} / {{ pages }}</span>
+    {% if params.page < pages %}<a class="text-link" href="{{ url_for('.index', status=params.status, q=params.q, page=params.page+1) }}">Дальше →</a>{% endif %}
+  </nav>
+{% endif %}

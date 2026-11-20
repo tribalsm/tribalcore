@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1226">
+  <meta name="description" content="Портфолио Ильи Латорцева. Python-разработчик: приложения и автоматизация с AI.">
+  <link rel="canonical" href="https://tribalcore.bond/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="TRIBALCORE">
+  <meta property="og:title" content="Илья Латорцев, Python-разработчик">
+  <meta property="og:description" content="Делаю приложения и автоматизацию с AI. Беру проекты и открыт к работе в команде.">
+  <meta property="og:url" content="https://tribalcore.bond/">
+  <meta property="og:image" content="https://tribalcore.bond/assets/og-home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preload" href="/assets/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css">
+  <title>Илья Латорцев | TRIBALCORE</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".75" fill="#e9eefb" opacity=".6"/></pattern>
+      <pattern id="dots-amber" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#ffb547"/></pattern>
+      <pattern id="dots-coral" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#ff8a7a"/></pattern>
+      <pattern id="dots-lilac" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#b9a3ff"/></pattern>
+      <pattern id="dots-aqua" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#6fd6c8"/></pattern>
+      <pattern id="hatch-amber" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#ffb547"/></pattern>
+    </defs>
+  </svg>
+
+  <div class="odo" aria-hidden="true">
+    <div class="odo-ticks"></div>
+    <div class="odo-read"><span class="odo-value" id="odo-value">0000,0</span><span class="odo-unit">км</span></div>
+  </div>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="brand" href="/" aria-label="TRIBALCORE, главная" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a>
+      <nav aria-label="Разделы сайта">
+        <a href="#projects">Проекты</a><a href="#principles">Как я работаю</a><a href="#stack">Технологии</a><a href="#contact">Контакты</a>
+      </nav>
+      <a class="btn btn-small" href="#contact">Написать</a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-text shell">
+        <h1 id="hero-title">Илья Латорцев</h1>
+        <p class="lead">Python-разработчик. Делаю приложения и автоматизацию с AI.</p>
+        <p class="note">Студент ТПУ. Беру проекты и открыт к работе в команде.</p>
+        <div class="hero-actions">
+          <a class="btn btn-amber" href="#contact">Написать</a>
+          <a class="text-link" href="#projects">Сразу к проектам ↓</a>
+        </div>
+      </div>
+
+      <div class="scene" id="scene">
+        <canvas class="scene-canvas" aria-hidden="true"></canvas>
+        <ul class="pins" aria-label="Карта проектов">
+          <li><a class="pin c-nightscout" href="/projects/nightscout" data-id="nightscout" data-title="NightScout"
+                 data-desc="Находит YouTube-каналы. AI отсеивает лишнее, решает человек." data-cta="Читать кейс"><span class="pin-ring" aria-hidden="true"></span><span class="pin-label" translate="no">NightScout</span></a></li>
+          <li><a class="pin c-debugych" href="/projects/debugych" data-id="debugych" data-title="Дебагыч"
+                 data-desc="AI-помощник тестировщика: воспроизводит дефект и проверяет исправление." data-cta="Читать кейс"><span class="pin-ring" aria-hidden="true"></span><span class="pin-label" translate="no">Дебагыч</span></a></li>
+          <li><a class="pin c-meeting" href="/projects/meeting-to-spec" data-id="meeting" data-title="Meeting to Spec"
+                 data-desc="Превращает запись встречи в черновик ТЗ со ссылками на фрагменты." data-cta="Читать кейс"><span class="pin-ring" aria-hidden="true"></span><span class="pin-label" translate="no">Meeting to Spec</span></a></li>
+          <li><a class="pin c-quizroom" href="/projects/quizroom" data-id="quizroom" data-title="QuizRoom"
+                 data-desc="Квизы в реальном времени: комната, код для игроков, таблица результатов." data-cta="Читать кейс"><span class="pin-ring" aria-hidden="true"></span><span class="pin-label" translate="no">QuizRoom</span></a></li>
+          <li><a class="pin c-mail" href="#contact" data-id="mail" data-title="Почтовый ящик"
+                 data-desc="Есть задача или вакансия? Напишите, отвечаю в течение дня." data-cta="К контактам"><span class="pin-ring" aria-hidden="true"></span><span class="pin-label">Почта</span></a></li>
+        </ul>
+        <div class="scene-card" id="scene-card" hidden>
+          <p class="card-title"><span class="card-dot" aria-hidden="true"></span><strong></strong></p>
+          <p class="card-desc"></p>
+          <a class="card-link text-link" href="#">Открыть</a>
+        </div>
+        <div class="scene-hint">
+          <button class="btn btn-small" type="button" id="drive">Поехать</button>
+          <p id="hint-text">Найдите проекты светом фар</p>
+        </div>
+        <p class="sr-only" aria-live="polite" id="scene-live"></p>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="projects-title">Проекты</h2>
+          <a class="text-link" href="https://github.com/tribalsm?tab=repositories">Все репозитории на GitHub</a>
+        </div>
+
+        <article class="project c-nightscout is-lead">
+          <div class="project-text">
+            <h3 translate="no">NightScout</h3>
+            <p class="project-kind">Главный кейс</p>
+            <p>Находит YouTube-каналы, анализирует их видео и собирает спорные случаи в очередь. AI отсеивает лишнее и объясняет почему, а решение принимает человек. За два месяца&nbsp;— 7&nbsp;879 найденных каналов и 77&nbsp;976 проанализированных видео.</p>
+            <ul class="tags" aria-label="Технологии"><li>Python</li><li>Flask</li><li>SQLite</li><li>OpenCV</li></ul>
+            <a class="text-link" href="/projects/nightscout">Читать кейс</a>
+          </div>
+          <figure class="project-art shot">
+            <a class="shot-frame" href="/assets/case-nightscout.webp"><img src="/assets/case-nightscout.webp" width="1120" height="700" loading="lazy" decoding="async" alt="Панель NightScout: обзор системы со счётчиками решений и таблицей каналов (демо-данные)"></a>
+            <figcaption>Панель управления, демо-данные</figcaption>
+          </figure>
+        </article>
+
+        <article class="project c-debugych is-flip">
+          <div class="project-text">
+            <h3 translate="no">Дебагыч</h3>
+            <p class="project-kind">Экспериментальный проект</p>
+            <p>AI-помощник для тестирования. Готовит сценарии Gherkin и тесты по требованиям, воспроизводит дефект и проверяет исправление в изолированной копии проекта.</p>
+            <ul class="tags" aria-label="Технологии"><li>Python</li><li>React</li><li>Playwright</li><li>Tauri</li></ul>
+            <p class="project-links"><a class="text-link" href="/projects/debugych">Читать кейс</a><a class="text-link" href="https://github.com/tribalsm/debugych">GitHub</a></p>
+          </div>
+          <figure class="project-art shot">
+            <a class="shot-frame" href="/assets/case-debugych.webp"><img src="/assets/case-debugych.webp" width="1120" height="639" loading="lazy" decoding="async" alt="Дебагыч: найденная ошибка «Платёж отклонён при точном балансе» с шагами доказательства, исправления и проверки"></a>
+            <figcaption>Найденная ошибка в демо-проекте</figcaption>
+          </figure>
+        </article>
+
+        <article class="project c-meeting">
+          <div class="project-text">
+            <h3 translate="no">Meeting to Spec</h3>
+            <p class="project-kind">Анализ встреч</p>
+            <p>Превращает запись встречи в редактируемый черновик ТЗ. Каждое требование связано с фрагментом транскрипции, итог экспортируется в Markdown.</p>
+            <ul class="tags" aria-label="Технологии"><li>FastAPI</li><li>React</li><li>TypeScript</li></ul>
+            <p class="project-links"><a class="text-link" href="/projects/meeting-to-spec">Читать кейс</a><a class="text-link" href="https://github.com/tribalsm/meeting-to-spec">GitHub</a></p>
+          </div>
+          <figure class="project-art shot">
+            <a class="shot-frame" href="/assets/case-meeting.webp"><img src="/assets/case-meeting.webp" width="656" height="440" loading="lazy" decoding="async" alt="Meeting to Spec: транскрипция встречи рядом со списком требований, у каждого требования ссылка на фрагмент"></a>
+            <figcaption>Требования со ссылками на транскрипцию</figcaption>
+          </figure>
+        </article>
+
+        <article class="project c-quizroom is-flip">
+          <div class="project-text">
+            <h3 translate="no">QuizRoom</h3>
+            <p class="project-kind">Квизы в реальном времени</p>
+            <p>Ведущий запускает комнату, игроки подключаются по коду и после раундов видят таблицу результатов.</p>
+            <ul class="tags" aria-label="Технологии"><li>React</li><li>Node.js</li><li>Socket.IO</li><li>SQLite</li></ul>
+            <p class="project-links"><a class="text-link" href="/projects/quizroom">Читать кейс</a><a class="text-link" href="https://github.com/tribalsm/quizroom">GitHub</a></p>
+          </div>
+          <figure class="project-art shot">
+            <div class="shot-frame"><video class="demo-video" src="/assets/quizroom-demo.mp4" poster="/assets/quizroom-demo-poster.webp" width="1280" height="720" muted loop playsinline preload="none" controls aria-label="Запись демо-игры QuizRoom: экран ведущего и телефон игрока"></video></div>
+            <figcaption>Демо-игра: экран ведущего и телефон игрока</figcaption>
+          </figure>
+        </article>
+
+        <article class="project c-trader">
+          <div class="project-text">
+            <h3 translate="no">AI Trader</h3>
+            <p class="project-kind">Исследовательский проект</p>
+            <p>Два виртуальных счёта торгуют BTC и ETH: один по классическим индикаторам, другой по прогнозу LightGBM. Одинаковые данные, издержки и лимиты риска, реальные сделки исключены в коде. На истории обе стратегии в минусе, но лимит просадки удержал потери около 10%.</p>
+            <ul class="tags" aria-label="Технологии"><li>Python</li><li>Freqtrade</li><li>LightGBM</li><li>Docker</li></ul>
+            <a class="text-link" href="/projects/ai-trader">Читать кейс</a>
+          </div>
+          <figure class="project-art shot">
+            <a class="shot-frame" href="/assets/case-trader.webp"><img src="/assets/case-trader.webp" width="1120" height="700" loading="lazy" decoding="async" alt="График исторического теста 2025–2026: доходность классики −7,75%, LightGBM −9,70%, удержания BTC −17,34%; просадка стратегий около 10% при лимите 10%, у BTC 53,74%"></a>
+            <figcaption>Исторический тест, виртуальные счета</figcaption>
+          </figure>
+        </article>
+
+        <details class="more">
+          <summary>Другие репозитории</summary>
+          <ul>
+            <li><a class="text-link" href="https://github.com/tribalsm/BookofRecipes">HardRecipe</a><span>Макет поиска рецептов по продуктам</span></li>
+            <li><a class="text-link" href="https://github.com/tribalsm/sitefortopit">Сайт-визитка</a><span>Личный одностраничный сайт</span></li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="principles" aria-labelledby="principles-title">
+      <div class="shell">
+        <h2 id="principles-title">Как я работаю</h2>
+        <div class="principles">
+          <article>
+            <h3>AI предлагает, решает человек</h3>
+            <p>Модель может отсеять лишнее и объяснить почему. Спорное решение остаётся за человеком, и у него под рукой все материалы.</p>
+            <a class="text-link" href="/projects/nightscout">Как это устроено в NightScout</a>
+          </article>
+          <article>
+            <h3>Если повторяется — автоматизирую</h3>
+            <p>Ручную рутину лучше один раз превратить в сервис, чем делать каждый день. Так появились NightScout и Meeting to Spec.</p>
+            <a class="text-link" href="/projects/meeting-to-spec">Meeting to Spec</a>
+          </article>
+          <article>
+            <h3>Сложное внутри, простое снаружи</h3>
+            <p>Под капотом могут быть очереди, версии и синхронизация. Человек видит комнату, код и понятный результат.</p>
+            <a class="text-link" href="/projects/quizroom">QuizRoom</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="shell about">
+        <h2 id="about-title">Обо мне</h2>
+        <div class="about-text">
+          <p>Учусь в <strong>Томском политехническом университете</strong>. Коммерческого опыта пока нет, поэтому вместо резюме здесь проекты: что сделано и что можно проверить в коде.</p>
+          <ul class="about-list">
+            <li class="c-nightscout"><b>Рабочий инструмент</b><span>NightScout: два месяца в работе, 7&nbsp;879 найденных каналов и 77&nbsp;976 проанализированных видео.</span></li>
+            <li class="c-meeting"><b>Хакатон, команда</b><span>Meeting to Spec: backend на FastAPI, AI-конвейер на Whisper и GPT-OSS, развёртывание на VPS.</span></li>
+            <li class="c-debugych"><b>Конкурсный проект</b><span>Дебагыч: тесты в песочницах gVisor, 228 backend-тестов и 49 браузерных сценариев в CI.</span></li>
+            <li class="c-trader"><b>Исследование</b><span>AI Trader: классика против LightGBM на виртуальных счетах, честное сравнение с удержанием BTC.</span></li>
+            <li class="c-quizroom"><b>Учебный проект</b><span>QuizRoom: игры в реальном времени на Socket.IO, авторизация, автотесты.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="stack" aria-labelledby="stack-title">
+      <div class="shell">
+        <h2 id="stack-title">Технологии</h2>
+        <div class="stack">
+          <div><h3>Сервер</h3><ul class="tags"><li>Python</li><li>Flask</li><li>FastAPI</li><li>Node.js</li><li>SQLite</li></ul></div>
+          <div><h3>Интерфейсы</h3><ul class="tags"><li>React</li><li>TypeScript</li><li>Vite</li><li>Socket.IO</li><li>Tauri</li></ul></div>
+          <div><h3>Тестирование и сборка</h3><ul class="tags"><li>pytest</li><li>Playwright</li><li>Docker</li><li>GitHub Actions</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="shell contact-inner">
+        <div class="contact-text">
+          <h2 id="contact-title">Есть задача? Давайте обсудим.</h2>
+          <p class="contact-lead">Беру проекты и открыт к работе в команде. Особенно если нужно <mark>убрать ручную рутину</mark> или аккуратно встроить AI в процесс.</p>
+          <p class="mail-line">Почта <a href="mailto:ilalatorcev@gmail.com" translate="no">ilalatorcev@gmail.com</a>
+            <button class="copy" type="button" id="copy-mail" data-mail="ilalatorcev@gmail.com" hidden>Скопировать</button>
+            <span class="copy-status" role="status" id="copy-status"></span></p>
+          <ul class="contact-buttons">
+            <li><a class="btn btn-amber" href="https://t.me/TribalSM">Telegram</a></li>
+            <li><a class="btn" href="mailto:ilalatorcev@gmail.com">Почта</a></li>
+            <li><a class="btn" href="https://vk.ru/ilya_latorcev">ВКонтакте</a></li>
+            <li><a class="btn" href="https://github.com/tribalsm">GitHub</a></li>
+          </ul>
+          <p class="scribble"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M50 36 C30 34 14 26 10 6 M4 14 L10 4 L17 12"/></svg>отвечаю в течение дня</p>
+        </div>
+        <figure class="contact-art" aria-hidden="true">
+          <svg viewBox="0 0 320 240" class="ill">
+            <line x1="10" y1="220" x2="310" y2="220"/>
+            <rect x="10" y="220" width="300" height="12" fill="url(#dots)" stroke="none"/>
+            <rect x="154" y="128" width="12" height="92" class="ill-fill"/>
+            <path d="M90 128 V84 a40 40 0 0 1 40 -40 H190 a40 40 0 0 1 40 40 V128 Z" class="ill-fill"/>
+            <path d="M190 44 a40 40 0 0 1 40 40 V128"/>
+            <line x1="112" y1="100" x2="168" y2="100"/>
+            <rect x="104" y="72" width="70" height="16" rx="2" fill="url(#dots-amber)" stroke="none" opacity=".8"/>
+            <path d="M108 70 h60 v20 h-60 Z M108 70 l30 12 l30 -12"/>
+            <line x1="236" y1="112" x2="236" y2="48"/>
+            <path d="M236 48 h40 v22 h-40" fill="url(#hatch-amber)"/>
+            <circle cx="236" cy="112" r="4" class="ill-fill"/>
+          </svg>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="end">
+    <div class="shell end-inner">
+      <figure class="end-art" aria-hidden="true">
+        <svg viewBox="0 0 320 180" class="ill">
+          <path d="M40 176 L140 40 M280 176 L180 40"/>
+          <path d="M160 176 V150 M160 136 V112 M160 98 V80 M160 68 V56" stroke-dasharray="1 0"/>
+          <rect x="96" y="62" width="128" height="22" fill="url(#hatch-amber)" stroke="none"/>
+          <rect x="96" y="62" width="128" height="22"/>
+          <line x1="106" y1="84" x2="106" y2="118"/><line x1="214" y1="84" x2="214" y2="118"/>
+          <path d="M248 150 a26 26 0 0 1 52 0"/>
+          <line x1="274" y1="150" x2="258" y2="134" class="accent-stroke" stroke-width="2.4"/>
+          <text x="246" y="166" class="ill-text">E</text><text x="294" y="166" class="ill-text">F</text>
+        </svg>
+      </figure>
+      <div class="end-text">
+        <p class="end-title">Вы доехали до конца. Бензин ещё есть?</p>
+        <p>Можно вернуться к карте, прочитать кейсы или заглянуть в остальные репозитории.</p>
+        <ul class="end-links">
+          <li><a class="text-link" href="#main">Обратно к карте</a></li>
+          <li><a class="text-link" href="/projects/nightscout">Кейс NightScout</a></li>
+          <li><a class="text-link" href="https://github.com/tribalsm?tab=repositories">Все репозитории</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="shell end-bottom"><a class="brand" href="/" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a><span>Илья Латорцев, 2026</span></div>
+  </footer>
+
+  <script src="/assets/site.js" defer></script>
+  <script src="/assets/scene2d.js" defer></script>
+  <script type="module" src="/assets/scene3d.js"></script>
+</body>
+</html>

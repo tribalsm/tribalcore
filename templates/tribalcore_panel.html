@@ -1,0 +1,118 @@
+{% extends "tribalcore_base.html" %}
+{% block assets %}
+  <link rel="stylesheet" href="{{ url_for('.static', filename='panel.css') }}">
+  <script src="{{ url_for('.static', filename='panel.js') }}" defer></script>
+{% endblock %}
+{% block content %}
+<header class="workspace-head">
+  <div>
+    <p class="eyebrow"><span class="signal"></span> Приватная панель</p>
+    <h1 translate="no">NightScout</h1>
+    <p>Ручная проверка YouTube-каналов</p>
+  </div>
+  <div class="workspace-tools">
+    <span id="sync" role="status"></span>
+    <button class="btn btn-small" type="button" id="refresh" hidden>Обновить <span aria-hidden="true">↻</span></button>
+    <a class="btn btn-amber" href="{{ url_for('.continue_review') }}">Продолжить проверку</a>
+  </div>
+</header>
+{% set messages = get_flashed_messages() %}
+{% if messages %}
+  <div class="notice" role="status">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+    {% if undo %}
+      <form method="post" action="{{ url_for('.undo_review') }}">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <button class="btn btn-small" type="submit">Отменить решение</button>
+      </form>
+    {% endif %}
+  </div>
+{% endif %}
+<div class="workspace">
+  <section class="queue" aria-labelledby="queue-title">
+    <h2 id="queue-title">Каналы</h2>
+    <form class="search" action="{{ url_for('.index') }}" method="get" role="search">
+      <input type="hidden" name="status" value="{{ params.status }}">
+      <input type="search" name="q" value="{{ params.q }}" maxlength="120" aria-label="Название, @имя или ID" autocomplete="off" spellcheck="false" placeholder="Название, @имя или ID…">
+      <button class="btn btn-small" type="submit">Найти</button>
+    </form>
+    <div id="queue-fragment" data-refresh="{{ url_for('.queue_fragment', **params) }}">
+      {% include "tribalcore_queue.html" %}
+    </div>
+  </section>
+  <section class="detail" aria-labelledby="detail-title">
+    {% if channel %}
+      {% set assignment = channel.assignment %}
+      <a class="back text-link" href="{{ url_for('.index', **params) }}">← К очереди</a>
+      <div class="channel-head">
+        <div>
+          <p class="eyebrow">{{ channel.channel_handle or channel.channel_id }}</p>
+          <h2 id="detail-title">{{ channel.channel_name or channel.channel_id }}</h2>
+        </div>
+        <a class="btn btn-small" href="https://www.youtube.com/channel/{{ channel.channel_id|urlencode }}" target="_blank" rel="noopener noreferrer">YouTube <span aria-hidden="true">↗</span></a>
+      </div>
+      <dl class="facts">
+        <div><dt>AI-оценка</dt><dd>{{ channel.display_nightscout_score or 'Нет оценки' }}</dd></div>
+        <div><dt>Категория</dt><dd>{{ channel.manual_category or channel.category or 'Не определена' }}</dd></div>
+        {% if channel.ai_confidence_recorded %}<div><dt>Уверенность AI</dt><dd>{{ "%.0f"|format(channel.category_confidence * 100) }}%</dd></div>{% endif %}
+        {% if channel.first_seen_at %}<div><dt>Найден</dt><dd>{{ channel.first_seen_at|tomsk_time }} (Томск)</dd></div>{% endif %}
+      </dl>
+      <div class="detail-block">
+        <h3>Решение AI</h3>
+        <p>{{ machine.get(channel.machine_decision, 'Нет сохранённого решения') }}</p>
+        {% if channel.reasons %}
+          <ul class="reason-list">
+          {% for reason in channel.reasons %}
+            {% set explanation = reason_view(reason) %}
+            <li>{{ explanation.label }}{% if explanation.hint %}<small>{{ explanation.hint }}</small>{% endif %}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="detail-block">
+        <h3>Видео из анализа <span>{{ channel.video_cards|length }}</span></h3>
+        {% if channel.video_cards %}
+          <ul class="videos">
+          {% for video in channel.video_cards %}
+            <li>
+              {% if video.youtube_url %}<a class="text-link" href="{{ video.youtube_url }}" target="_blank" rel="noopener noreferrer">{{ video.title or video.video_id }} ↗</a>
+              {% else %}<strong>{{ video.title or video.video_id }}</strong>{% endif %}
+              {% if video.summary %}<p>{{ video.summary }}</p>{% endif %}
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}<p>Для этого канала нет карточек видео.</p>{% endif %}
+      </div>
+      {% if assignment and assignment.state == 'queued' and channel.manual_status == 'pending_review' %}
+        <form class="review-form" id="channel-review" method="post" action="{{ url_for('.review') }}">
+          <h3>Решение проверяющего</h3>
+          {# Enter in a text field must not trigger the first decision button. #}
+          <button type="submit" disabled hidden aria-hidden="true" tabindex="-1" data-default-guard></button>
+          <input type="hidden" name="csrf" value="{{ csrf }}">
+          <input type="hidden" name="assignment" value="{{ assignment.id }}">
+          <input type="hidden" name="version" value="{{ assignment.version }}">
+          <label>Категория
+            <select name="category" autocomplete="off" required>
+              {% for category in categories %}<option{% if category == assignment.category %} selected{% endif %}>{{ category }}</option>{% endfor %}
+            </select>
+          </label>
+          <label>Причина отклонения <span>(по желанию)</span><input name="reason" autocomplete="off" maxlength="240"></label>
+        </form>
+        <div class="decision-buttons" role="group" aria-label="Действия по каналу">
+          <button class="btn btn-amber" form="channel-review" type="submit" name="decision" value="suitable">Одобрить</button>
+          <button class="btn reject" form="channel-review" type="submit" name="decision" value="unsuitable">Отклонить</button>
+          <button class="btn" form="channel-review" type="submit" name="decision" value="later">Пропустить</button>
+        </div>
+      {% elif channel.manual_action %}
+        <p class="notice">{{ decisions.get(channel.manual_action.decision, 'Проверен') }}</p>
+      {% endif %}
+    {% else %}
+      <div class="detail-empty">
+        <div class="reticle" aria-hidden="true"></div>
+        <h2 id="detail-title">Выберите канал</h2>
+        <p>В карточке появятся оценка, причины решения и видео, которые использовал NightScout.</p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

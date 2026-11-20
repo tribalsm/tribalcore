@@ -1,0 +1,10 @@
+{% extends "tribalcore_base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="login-card">
+  <p class="eyebrow">NightScout</p>
+  <h1>{{ title }}</h1>
+  <p>{{ message }}</p>
+  <a class="btn" href="{{ url_for('tribalcore_panel.index') }}">К очереди</a>
+</section>
+{% endblock %}

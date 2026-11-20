@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1226">
+  <meta name="description" content="Кейс Дебагыч. AI-помощник для тестирования: от требования до проверенного исправления.">
+  <link rel="canonical" href="https://tribalcore.bond/projects/debugych">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="TRIBALCORE">
+  <meta property="og:title" content="Кейс Дебагыч: от требования до проверенного исправления">
+  <meta property="og:description" content="Тесты по требованиям, воспроизведение ошибки и проверка патча в изолированной копии проекта.">
+  <meta property="og:url" content="https://tribalcore.bond/projects/debugych">
+  <meta property="og:image" content="https://tribalcore.bond/assets/og-debugych.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preload" href="/assets/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css">
+  <title>Кейс Дебагыч | TRIBALCORE</title>
+</head>
+<body class="c-debugych">
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".75" fill="#e9eefb" opacity=".6"/></pattern>
+      <pattern id="dots-amber" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#ffb547"/></pattern>
+      <pattern id="hatch-amber" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#ffb547"/></pattern>
+    </defs>
+  </svg>
+
+  <div class="odo" aria-hidden="true">
+    <div class="odo-ticks"></div>
+    <div class="odo-read"><span class="odo-value" id="odo-value">0000,0</span><span class="odo-unit">км</span></div>
+  </div>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="brand" href="/" aria-label="TRIBALCORE, главная" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a>
+      <nav aria-label="Разделы сайта">
+        <a href="/#projects">Проекты</a><a href="/#principles">Как я работаю</a><a href="/#stack">Технологии</a><a href="#contact">Контакты</a>
+      </nav>
+      <a class="btn btn-small" href="#contact">Написать</a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div class="shell case-hero">
+      <div class="case-intro">
+        <a class="text-link" href="/#projects">Все проекты</a>
+        <h1 translate="no">Дебагыч</h1>
+        <p class="lead">Как AI находит ошибку и проверяет исправление</p>
+        <p class="case-summary">Дебагыч получает код и требования, готовит сценарии Gherkin и автотесты, воспроизводит ошибку и проверяет исправление в изолированной копии проекта. Файлы проекта меняются только после подтверждения человека.</p>
+        <ul class="tags" aria-label="Технологии"><li>Python</li><li>FastAPI</li><li>React</li><li>Playwright</li><li>gVisor</li></ul>
+        <a class="btn btn-amber" href="#example">Разобрать пример</a>
+      </div>
+      <figure class="case-frame">
+        <div class="frame-box is-shot">
+          <img src="/assets/case-debugych.webp" width="1120" height="639" fetchpriority="high" alt="Дебагыч: найденная ошибка «Платёж отклонён при точном балансе» с шагами доказательства, исправления и проверки">
+        </div>
+        <figcaption><span>Shop API</span><span>демо-проект из репозитория</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="task-title">
+      <div class="shell split">
+        <h2 id="task-title">Задача</h2>
+        <div class="case-text">
+          <p>Требование лежит в документе, тест в коде, а ошибка в отчёте без доказательства. Чтобы понять, баг это или сбой окружения, приходится всё перепроверять руками.</p>
+          <p>Хотелось, чтобы каждое требование превращалось в проверку, каждая найденная ошибка получала воспроизводимое доказательство, а исправление проверялось до того, как попадёт в код.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="example" aria-labelledby="example-title">
+      <div class="shell">
+        <h2 id="example-title">Одна ошибка</h2>
+        <p class="section-lead">Демо-проект Shop API из репозитория: платёж при точном балансе.</p>
+        <ol class="route">
+          <li>
+            <div class="route-copy">
+              <h3>Требование становится проверкой</h3>
+              <p>Требование R1: платёж разрешён, если баланс больше суммы или равен ей. Дебагыч строит по нему сценарий и pytest-тест и запускает весь набор в одноразовой песочнице gVisor без доступа к сети.</p>
+            </div>
+            <dl class="readout"><div><dt>Требование</dt><dd>R1</dd></div><div><dt>Итог</dt><dd>13 успешно, 1 отклонение</dd></div><div><dt>Покрытие</dt><dd>86,7%</dd></div></dl>
+            <figure class="route-shot">
+              <a class="shot-frame" href="/assets/dbg-tests.webp"><img src="/assets/dbg-tests.webp" width="1154" height="595" loading="lazy" decoding="async" alt="Дебагыч, проверки проекта Shop API: 13 успешно, 1 с отклонением, покрытие 86,7%; тест «Границы оплаты, скидки и количества» не выполнил ожидание"></a>
+              <figcaption>Проверки проекта, демо-набор</figcaption>
+            </figure>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>Ошибка получает доказательство</h3>
+              <p>Тест падает при точном балансе. Дебагыч повторяет запуск, чтобы отличить дефект от сбоя окружения, и предлагает минимальный diff: в сравнении стоит <code>&gt;</code> вместо <code>&gt;=</code>.</p>
+            </div>
+            <dl class="readout"><div><dt>Где</dt><dd>shop.py:10</dd></div><div><dt>Причина</dt><dd>&gt; вместо &gt;=</dd></div></dl>
+            <figure class="route-shot is-narrow">
+              <a class="shot-frame" href="/assets/dbg-diff.webp"><img src="/assets/dbg-diff.webp" width="670" height="690" loading="lazy" decoding="async" alt="Предлагаемое исправление в shop.py: return balance > amount заменено на return balance >= amount"></a>
+              <figcaption>Предлагаемое исправление</figcaption>
+            </figure>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>Исправление проверяется в копии</h3>
+              <p>Патч применяется к изолированной копии проекта. Проходят и исходный тест, и остальной набор. Сами файлы проекта меняются только после отдельного подтверждения.</p>
+            </div>
+            <dl class="readout"><div><dt>Набор</dt><dd>14 passed, 0 failed</dd></div><div><dt>Применение</dt><dd>после подтверждения</dd></div></dl>
+            <figure class="route-shot is-narrow">
+              <a class="shot-frame" href="/assets/dbg-verified.webp"><img src="/assets/dbg-verified.webp" width="670" height="630" loading="lazy" decoding="async" alt="Проверенный набор: 14 passed, 0 failed; исходная проблема исправлена, регрессий нет; кнопка «Подтвердить применение»"></a>
+              <figcaption>Проверка исправления</figcaption>
+            </figure>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="contribution-title">
+      <div class="shell split">
+        <h2 id="contribution-title">Что я сделал</h2>
+        <ul class="case-list">
+          <li>Требования с цитатами, сценарии Gherkin и тесты pytest и Playwright через структурированные ответы модели со строгой проверкой.</li>
+          <li>Запуск тестов в одноразовых песочницах gVisor без внешней сети.</li>
+          <li>Покрытие: coverage.py для Python, Istanbul с source maps для JS и TypeScript.</li>
+          <li>Bug Proof и Fix &amp; Verify: повторное воспроизведение, минимальный diff и проверка на регрессии.</li>
+          <li>Экспорт в JUnit XML и пакет для GitHub Actions, приложение для Windows на Tauri.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="ai-title">
+      <div class="shell split">
+        <h2 id="ai-title">AI и человек</h2>
+        <div class="case-text">
+          <p>AI пишет тесты и предлагает патч, <mark>решает человек</mark>. Код меняется только после подтверждения.</p>
+          <p>Дебагыч не выдаёт сбой окружения за дефект, останавливается на неоднозначном требовании и прямо пишет, что успешный набор не доказывает отсутствие всех ошибок.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="result-title">
+      <div class="shell">
+        <h2 id="result-title">Проверки</h2>
+        <p class="section-lead">Релиз desktop-1.3 прошёл CI целиком. Платных запросов к модели в CI нет: ответы подготовлены заранее, а тесты запускаются по-настоящему.</p>
+        <dl class="gauges">
+          <div><dt>Backend-тестов</dt><dd>228</dd></div>
+          <div><dt>Браузерных сценариев</dt><dd>49</dd></div>
+          <div><dt>Сценариев в Docker Compose</dt><dd>54</dd></div>
+        </dl>
+        <p class="case-note">По данным README репозитория.</p>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="links-title">
+      <div class="shell split">
+        <h2 id="links-title">Код и ссылки</h2>
+        <div class="case-text">
+          <p>Код открыт. В README есть инструкция по запуску через Docker Compose и подробности о проверках.</p>
+          <ul class="case-links">
+            <li><a class="text-link" href="https://github.com/tribalsm/debugych">Репозиторий на GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="shell contact-inner">
+        <div class="contact-text">
+          <h2 id="contact-title">Нужно что&#8209;то похожее?</h2>
+          <p class="contact-lead">Беру проекты и открыт к работе в команде. Расскажу, как устроен Дебагыч.</p>
+          <p class="mail-line">Почта <a href="mailto:ilalatorcev@gmail.com" translate="no">ilalatorcev@gmail.com</a>
+            <button class="copy" type="button" id="copy-mail" data-mail="ilalatorcev@gmail.com" hidden>Скопировать</button>
+            <span class="copy-status" role="status" id="copy-status"></span></p>
+          <ul class="contact-buttons">
+            <li><a class="btn btn-amber" href="https://t.me/TribalSM">Telegram</a></li>
+            <li><a class="btn" href="mailto:ilalatorcev@gmail.com">Почта</a></li>
+            <li><a class="btn" href="https://vk.ru/ilya_latorcev">ВКонтакте</a></li>
+            <li><a class="btn" href="https://github.com/tribalsm">GitHub</a></li>
+          </ul>
+          <p class="scribble"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M50 36 C30 34 14 26 10 6 M4 14 L10 4 L17 12"/></svg>отвечаю в течение дня</p>
+        </div>
+        <figure class="contact-art" aria-hidden="true">
+          <svg viewBox="0 0 320 240" class="ill">
+            <line x1="10" y1="220" x2="310" y2="220"/>
+            <rect x="10" y="220" width="300" height="12" fill="url(#dots)" stroke="none"/>
+            <rect x="154" y="128" width="12" height="92" class="ill-fill"/>
+            <path d="M90 128 V84 a40 40 0 0 1 40 -40 H190 a40 40 0 0 1 40 40 V128 Z" class="ill-fill"/>
+            <path d="M190 44 a40 40 0 0 1 40 40 V128"/>
+            <line x1="112" y1="100" x2="168" y2="100"/>
+            <rect x="104" y="72" width="70" height="16" rx="2" fill="url(#dots-amber)" stroke="none" opacity=".8"/>
+            <path d="M108 70 h60 v20 h-60 Z M108 70 l30 12 l30 -12"/>
+            <line x1="236" y1="112" x2="236" y2="48"/>
+            <path d="M236 48 h40 v22 h-40" fill="url(#hatch-amber)"/>
+            <circle cx="236" cy="112" r="4" class="ill-fill"/>
+          </svg>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="end">
+    <div class="shell end-inner">
+      <figure class="end-art" aria-hidden="true">
+        <svg viewBox="0 0 320 180" class="ill">
+          <path d="M40 176 L140 40 M280 176 L180 40"/>
+          <path d="M160 176 V150 M160 136 V112 M160 98 V80 M160 68 V56"/>
+          <rect x="96" y="62" width="128" height="22" fill="url(#hatch-amber)" stroke="none"/>
+          <rect x="96" y="62" width="128" height="22"/>
+          <line x1="106" y1="84" x2="106" y2="118"/><line x1="214" y1="84" x2="214" y2="118"/>
+          <path d="M248 150 a26 26 0 0 1 52 0"/>
+          <line x1="274" y1="150" x2="258" y2="134" class="accent-stroke" stroke-width="2.4"/>
+          <text x="246" y="166" class="ill-text">E</text><text x="294" y="166" class="ill-text">F</text>
+        </svg>
+      </figure>
+      <div class="end-text">
+        <p class="end-title">Конец маршрута. Бензин ещё есть?</p>
+        <p>Можно вернуться к карте проектов или заглянуть в открытые репозитории.</p>
+        <ul class="end-links">
+          <li><a class="text-link" href="/">К карте проектов</a></li>
+          <li><a class="text-link" href="/projects/meeting-to-spec">Кейс Meeting to Spec</a></li>
+          <li><a class="text-link" href="https://github.com/tribalsm?tab=repositories">Репозитории на GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="shell end-bottom"><a class="brand" href="/" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a><span>Илья Латорцев, 2026</span></div>
+  </footer>
+
+  <script src="/assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# Old pre-git snapshot and raw screenshot candidates (kept on disk, not tracked)
+archive/
+screens-candidates/
+# Server details that stay off the public repository (SNI router config, server notes)
+deploy/sni-443.stream.conf
+deploy/*.local.md

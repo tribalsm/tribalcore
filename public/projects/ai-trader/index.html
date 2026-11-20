@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1226">
+  <meta name="description" content="Кейс AI Trader. Классическая стратегия против LightGBM на виртуальных счетах: проверка на истории и защита от реальных сделок.">
+  <link rel="canonical" href="https://tribalcore.bond/projects/ai-trader">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="TRIBALCORE">
+  <meta property="og:title" content="Кейс AI Trader: две стратегии на виртуальных счетах">
+  <meta property="og:description" content="Классика против LightGBM, проверка на истории 2025–2026 и лимиты риска. Без реальных денег.">
+  <meta property="og:url" content="https://tribalcore.bond/projects/ai-trader">
+  <meta property="og:image" content="https://tribalcore.bond/assets/og-trader.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preload" href="/assets/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css">
+  <title>Кейс AI Trader | TRIBALCORE</title>
+</head>
+<body class="c-trader">
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".75" fill="#e9eefb" opacity=".6"/></pattern>
+      <pattern id="dots-amber" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#ffb547"/></pattern>
+      <pattern id="hatch-amber" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#ffb547"/></pattern>
+    </defs>
+  </svg>
+
+  <div class="odo" aria-hidden="true">
+    <div class="odo-ticks"></div>
+    <div class="odo-read"><span class="odo-value" id="odo-value">0000,0</span><span class="odo-unit">км</span></div>
+  </div>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="brand" href="/" aria-label="TRIBALCORE, главная" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a>
+      <nav aria-label="Разделы сайта">
+        <a href="/#projects">Проекты</a><a href="/#principles">Как я работаю</a><a href="/#stack">Технологии</a><a href="#contact">Контакты</a>
+      </nav>
+      <a class="btn btn-small" href="#contact">Написать</a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div class="shell case-hero">
+      <div class="case-intro">
+        <a class="text-link" href="/#projects">Все проекты</a>
+        <h1 translate="no">AI Trader</h1>
+        <p class="lead">Как проверить торговую стратегию, не рискуя деньгами</p>
+        <p class="case-summary">Исследовательский проект. Два виртуальных счёта по 1000 USDT торгуют BTC и ETH на публичных котировках Binance: один по классическим индикаторам, другой по прогнозу LightGBM. Реальные сделки исключены на уровне кода.</p>
+        <ul class="tags" aria-label="Технологии"><li>Python</li><li>Freqtrade</li><li>LightGBM</li><li>Docker</li><li>Telegram</li></ul>
+        <a class="btn btn-amber" href="#example">Разобрать эксперимент</a>
+      </div>
+      <figure class="case-frame">
+        <div class="frame-box is-shot">
+          <img src="/assets/case-trader.webp" width="1120" height="700" fetchpriority="high" alt="График исторического теста 2025–2026: доходность классики −7,75%, LightGBM −9,70%, удержания BTC −17,34%; максимальная просадка 10,17%, 10,27% и 53,74% при лимите 10%">
+        </div>
+        <figcaption><span>Исторический тест 2025–2026</span><span>виртуальные счета</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="task-title">
+      <div class="shell split">
+        <h2 id="task-title">Задача</h2>
+        <div class="case-text">
+          <p>Хотелось честно проверить, торгует ли модель машинного обучения лучше простых правил. Для этого обе стратегии должны работать в одинаковых условиях: те же данные, те же издержки и те же лимиты риска.</p>
+          <p>И эксперимент ни при каких настройках не должен тратить настоящие деньги.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="example" aria-labelledby="example-title">
+      <div class="shell">
+        <h2 id="example-title">Один эксперимент</h2>
+        <p class="section-lead">Две стратегии на одних и тех же часовых свечах BTC/USDT и ETH/USDT.</p>
+        <ol class="route">
+          <li>
+            <div class="route-copy">
+              <h3>Проверенные данные</h3>
+              <p>История берётся из публичного архива Binance. Каждый месячный архив сверяется с опубликованной контрольной суммой SHA-256, а пропущенные часы помечаются и попадают в отчёт.</p>
+            </div>
+            <dl class="readout"><div><dt>Архивов</dt><dd>164</dd></div><div><dt>Свечей на пару</dt><dd>59&nbsp;873</dd></div><div><dt>Пропущено часов</dt><dd>31</dd></div></dl>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>Две стратегии, одни условия</h3>
+              <p>Счёт A входит по EMA, RSI, ATR, объёму и волатильности. Счёт B использует FreqAI: LightGBM учится на предыдущих 90 днях и прогнозирует доходность на 6 часов вперёд. Правила проверены на 2021–2024 годах и без изменений прогнаны на 2025–2026.</p>
+            </div>
+            <dl class="readout"><div><dt>Окно обучения</dt><dd>90 дней</dd></div><div><dt>Шаг</dt><dd>30 дней</dd></div><div><dt>Окон на пару</dt><dd>23</dd></div></dl>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>Срабатывает защита</h3>
+              <p>Обе стратегии ушли в минус, и лимит просадки 10% остановил входы. Позиции закрылись, счёт остался в деньгах до конца периода. Удержание BTC за то же время потеряло больше и просело на 54%.</p>
+            </div>
+            <dl class="readout"><div><dt>Классика</dt><dd>−7,75%</dd></div><div><dt>LightGBM</dt><dd>−9,70%</dd></div><div><dt>Удержание BTC</dt><dd>−17,34%</dd></div></dl>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="contribution-title">
+      <div class="shell split">
+        <h2 id="contribution-title">Что я сделал</h2>
+        <ul class="case-list">
+          <li>Обёртку над Freqtrade в Docker Compose: два независимых счёта и отдельный профиль для тестов на истории.</li>
+          <li>Две стратегии: классическую на индикаторах и LightGBM через FreqAI с переобучением раз в сутки.</li>
+          <li>Контроль риска: размер сделки от стопа и издержек, дневной лимит убытка, лимит просадки, проверка свежести котировок и спреда.</li>
+          <li>Загрузку истории с проверкой SHA-256 и отчёт со сравнением с удержанием BTC.</li>
+          <li>Панель сравнения счетов и ежедневную сводку в Telegram с очередью на диске и повторами при сбоях.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="safety-title">
+      <div class="shell split">
+        <h2 id="safety-title">Без реальных денег</h2>
+        <div class="case-text">
+          <p>Режим dry-run включён <mark>принудительно</mark>: запуск, проверка итогового конфига и сетевой слой пропускают только публичные GET-запросы к Binance. Торговые ключи запрещены, приватные методы не проходят проверку, ручной вход из панели выключен.</p>
+          <p>Это исследование, а не торговая рекомендация.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="result-title">
+      <div class="shell">
+        <h2 id="result-title">Результат</h2>
+        <p class="section-lead">Ни одна стратегия не заработала. LightGBM сделал больше сделок и потерял больше классики. Зато защита сработала как задумано: потери остановились около 10%, а удержание BTC за тот же период просело на 54%.</p>
+        <dl class="gauges">
+          <div><dt>Классика</dt><dd>−7,75%</dd></div>
+          <div><dt>LightGBM</dt><dd>−9,70%</dd></div>
+          <div><dt>Удержание BTC</dt><dd>−17,34%</dd></div>
+          <div><dt>Сделок, классика</dt><dd>27</dd></div>
+          <div><dt>Сделок, LightGBM</dt><dd>103</dd></div>
+          <div><dt>Просадка BTC</dt><dd>53,74%</dd></div>
+        </dl>
+        <p class="case-note">Период 01.01.2025 – 01.11.2026, комиссия 10 б.п. и проскальзывание 5 б.п. на сторону. С повышенными издержками итог хуже, но порядок тот же.</p>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="links-title">
+      <div class="shell split">
+        <h2 id="links-title">Код и ссылки</h2>
+        <div class="case-text">
+          <p>Репозиторий приватный. Покажу код, тесты и выгрузки Freqtrade на созвоне.</p>
+          <ul class="case-links">
+            <li><a class="text-link" href="#contact">Договориться о созвоне</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="shell contact-inner">
+        <div class="contact-text">
+          <h2 id="contact-title">Нужно что&#8209;то похожее?</h2>
+          <p class="contact-lead">Беру проекты и открыт к работе в команде. Расскажу, как устроен эксперимент, и покажу код на созвоне.</p>
+          <p class="mail-line">Почта <a href="mailto:ilalatorcev@gmail.com" translate="no">ilalatorcev@gmail.com</a>
+            <button class="copy" type="button" id="copy-mail" data-mail="ilalatorcev@gmail.com" hidden>Скопировать</button>
+            <span class="copy-status" role="status" id="copy-status"></span></p>
+          <ul class="contact-buttons">
+            <li><a class="btn btn-amber" href="https://t.me/TribalSM">Telegram</a></li>
+            <li><a class="btn" href="mailto:ilalatorcev@gmail.com">Почта</a></li>
+            <li><a class="btn" href="https://vk.ru/ilya_latorcev">ВКонтакте</a></li>
+            <li><a class="btn" href="https://github.com/tribalsm">GitHub</a></li>
+          </ul>
+          <p class="scribble"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M50 36 C30 34 14 26 10 6 M4 14 L10 4 L17 12"/></svg>отвечаю в течение дня</p>
+        </div>
+        <figure class="contact-art" aria-hidden="true">
+          <svg viewBox="0 0 320 240" class="ill">
+            <line x1="10" y1="220" x2="310" y2="220"/>
+            <rect x="10" y="220" width="300" height="12" fill="url(#dots)" stroke="none"/>
+            <rect x="154" y="128" width="12" height="92" class="ill-fill"/>
+            <path d="M90 128 V84 a40 40 0 0 1 40 -40 H190 a40 40 0 0 1 40 40 V128 Z" class="ill-fill"/>
+            <path d="M190 44 a40 40 0 0 1 40 40 V128"/>
+            <line x1="112" y1="100" x2="168" y2="100"/>
+            <rect x="104" y="72" width="70" height="16" rx="2" fill="url(#dots-amber)" stroke="none" opacity=".8"/>
+            <path d="M108 70 h60 v20 h-60 Z M108 70 l30 12 l30 -12"/>
+            <line x1="236" y1="112" x2="236" y2="48"/>
+            <path d="M236 48 h40 v22 h-40" fill="url(#hatch-amber)"/>
+            <circle cx="236" cy="112" r="4" class="ill-fill"/>
+          </svg>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="end">
+    <div class="shell end-inner">
+      <figure class="end-art" aria-hidden="true">
+        <svg viewBox="0 0 320 180" class="ill">
+          <path d="M40 176 L140 40 M280 176 L180 40"/>
+          <path d="M160 176 V150 M160 136 V112 M160 98 V80 M160 68 V56"/>
+          <rect x="96" y="62" width="128" height="22" fill="url(#hatch-amber)" stroke="none"/>
+          <rect x="96" y="62" width="128" height="22"/>
+          <line x1="106" y1="84" x2="106" y2="118"/><line x1="214" y1="84" x2="214" y2="118"/>
+          <path d="M248 150 a26 26 0 0 1 52 0"/>
+          <line x1="274" y1="150" x2="258" y2="134" class="accent-stroke" stroke-width="2.4"/>
+          <text x="246" y="166" class="ill-text">E</text><text x="294" y="166" class="ill-text">F</text>
+        </svg>
+      </figure>
+      <div class="end-text">
+        <p class="end-title">Конец маршрута. Бензин ещё есть?</p>
+        <p>Можно вернуться к карте проектов или заглянуть в открытые репозитории.</p>
+        <ul class="end-links">
+          <li><a class="text-link" href="/">К карте проектов</a></li>
+          <li><a class="text-link" href="/projects/nightscout">Кейс NightScout</a></li>
+          <li><a class="text-link" href="https://github.com/tribalsm?tab=repositories">Репозитории на GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="shell end-bottom"><a class="brand" href="/" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a><span>Илья Латорцев, 2026</span></div>
+  </footer>
+
+  <script src="/assets/site.js" defer></script>
+</body>
+</html>

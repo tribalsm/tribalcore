@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1226">
+  <meta name="description" content="Кейс NightScout. Как AI отсеивает YouTube-каналы и готовит материалы, а решение принимает человек.">
+  <link rel="canonical" href="https://tribalcore.bond/projects/nightscout">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="TRIBALCORE">
+  <meta property="og:title" content="Кейс NightScout: AI отсеивает, решает человек">
+  <meta property="og:description" content="7 879 найденных каналов, 77 976 проанализированных видео и ручная проверка спорных случаев.">
+  <meta property="og:url" content="https://tribalcore.bond/projects/nightscout">
+  <meta property="og:image" content="https://tribalcore.bond/assets/og-nightscout.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preload" href="/assets/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css">
+  <title>Кейс NightScout | TRIBALCORE</title>
+</head>
+<body class="c-nightscout">
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".75" fill="#e9eefb" opacity=".6"/></pattern>
+      <pattern id="dots-amber" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#ffb547"/></pattern>
+      <pattern id="hatch-amber" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="#ffb547"/></pattern>
+    </defs>
+  </svg>
+
+  <div class="odo" aria-hidden="true">
+    <div class="odo-ticks"></div>
+    <div class="odo-read"><span class="odo-value" id="odo-value">0000,0</span><span class="odo-unit">км</span></div>
+  </div>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="brand" href="/" aria-label="TRIBALCORE, главная" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a>
+      <nav aria-label="Разделы сайта">
+        <a href="/#projects">Проекты</a><a href="/#principles">Как я работаю</a><a href="/#stack">Технологии</a><a href="#contact">Контакты</a>
+      </nav>
+      <a class="btn btn-small" href="#contact">Написать</a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div class="shell case-hero">
+      <div class="case-intro">
+        <a class="text-link" href="/#projects">Все проекты</a>
+        <h1 translate="no">NightScout</h1>
+        <p class="lead">Как YouTube-канал проходит от поиска до решения</p>
+        <p class="case-summary">NightScout находит YouTube-каналы, анализирует их видео с помощью AI и собирает спорные случаи в очередь, где решение принимает человек.</p>
+        <ul class="tags" aria-label="Технологии"><li>Python</li><li>Flask</li><li>SQLite</li><li>OpenCV</li><li>YouTube</li></ul>
+        <a class="btn btn-amber" href="#review-example">Разобрать пример</a>
+      </div>
+      <figure class="case-frame">
+        <div class="frame-box">
+          <img src="/assets/nightscout-frame.webp" width="768" height="432" fetchpriority="high" alt="Туман над лесной рекой в демонстрационном кадре">
+        </div>
+        <figcaption><span>Реки и тропы</span><span>канал и кадр вымышлены</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="task-title">
+      <div class="shell split">
+        <h2 id="task-title">Задача</h2>
+        <div class="case-text">
+          <p>Нужно было находить YouTube-каналы нужных категорий, которые подходят под требования к видео: достаточно обычных роликов, качество от 720p, без постоянного текста и водяных знаков в кадре.</p>
+          <p>Вручную это значит открыть профиль, пролистать ролики и посмотреть фрагменты. На тысячах кандидатов так не успеть, а пропускать проверку нельзя: ошибка уходит дальше в отправку.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" id="review-example" aria-labelledby="review-title">
+      <div class="shell">
+        <h2 id="review-title">Одна проверка</h2>
+        <p class="section-lead">Путь вымышленного канала «Реки и тропы» от поиска до решения.</p>
+        <ol class="route">
+          <li>
+            <div class="route-copy">
+              <h3>Канал попадает в очередь</h3>
+              <p>NightScout находит кандидатов на YouTube, собирает сведения о канале и выбирает видео для анализа. После анализа «Реки и тропы» появляются в списке на проверку.</p>
+            </div>
+            <dl class="readout"><div><dt>Канал</dt><dd>Реки и тропы</dd></div><div><dt>Категория</dt><dd>Природа</dd></div><div><dt>Статус</dt><dd>На проверке</dd></div></dl>
+            <figure class="route-shot">
+              <a class="shot-frame" href="/assets/ns-queue.webp"><img src="/assets/ns-queue.webp" width="1154" height="400" loading="lazy" decoding="async" alt="Очередь проверки NightScout: «Реки и тропы» с оценкой 87 из 100 первым в списке на ручную проверку"></a>
+              <figcaption>Очередь проверки, демо-данные</figcaption>
+            </figure>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>AI объясняет оценку</h3>
+              <p>В карточке видны итоговая оценка, причины и ссылки на видео. Балл высокий, но AI заметил текстовую вставку в одном ролике, поэтому сам канал не одобрил. Проверяющему нужно открыть видео и выяснить, где она появляется.</p>
+            </div>
+            <dl class="readout"><div><dt>Оценка AI</dt><dd>87 из 100</dd></div><div><dt>Замечание</dt><dd>Текст в одном видео</dd></div></dl>
+            <figure class="route-shot">
+              <a class="shot-frame" href="/assets/ns-card.webp"><img src="/assets/ns-card.webp" width="1154" height="430" loading="lazy" decoding="async" alt="Карточка канала «Реки и тропы»: машинное решение needs_review, оценка 87 из 100, категория Природа 93%, причина overlay_text_present"></a>
+              <figcaption>Карточка канала: решение и причина</figcaption>
+            </figure>
+          </li>
+          <li>
+            <div class="route-copy">
+              <h3>Проверяющий решает</h3>
+              <p>Проверяющий смотрит нужный фрагмент и видит, что текст есть только в заставке. Основная часть подходит, поэтому он одобряет канал. NightScout сохраняет решение, добавляет канал в очередь отправки и открывает следующего кандидата.</p>
+            </div>
+            <dl class="readout"><div><dt>Решение</dt><dd>Одобрен</dd></div><div><dt>Дальше</dt><dd>Очередь отправки</dd></div></dl>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="contribution-title">
+      <div class="shell split">
+        <h2 id="contribution-title">Что я сделал</h2>
+        <ul class="case-list">
+          <li>Поиск кандидатов и Night Worker, который по ночам собирает и анализирует новые каналы.</li>
+          <li>Анализ видео: из двух роликов канала берётся 18 кадров, OpenCV отбирает самые информативные, и модель оценивает 4–6 из них.</li>
+          <li>Правила решения: автоматический отсев, автоматическое одобрение и ручная проверка с понятными причинами.</li>
+          <li>Общую очередь для нескольких проверяющих: резервирование карточек, версии решений и отправка одобренных каналов дальше.</li>
+          <li>Развёртывание на VPS: gunicorn, nginx и отдельная служба для веб-интерфейса.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="ai-title">
+      <div class="shell split">
+        <h2 id="ai-title">AI и человек</h2>
+        <div class="case-text">
+          <p>AI отсеивает и объясняет, <mark>решает человек</mark>. Мультимодальная модель смотрит ключевые кадры и отмечает, что мешает: текст на экране, водяные знаки, неподходящий формат.</p>
+          <p>Сам AI одобряет канал, только если балл от 85, категория определена с уверенностью от 90% и ни одно видео не вызывает сомнений. Каналы, которые не отсеяны сразу и не прошли этот порог, попадают к проверяющему вместе с причинами и ссылками на нужные видео.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section" aria-labelledby="result-title">
+      <div class="shell">
+        <h2 id="result-title">Результат</h2>
+        <p class="section-lead">За два месяца NightScout нашёл 7&nbsp;879 каналов и проанализировал 77&nbsp;976 видео. 2&nbsp;545 каналов AI отсеял сам, 1&nbsp;898 отправил людям. Порог автоодобрения строгий: за всё время AI сам одобрил только два канала. Решение по каналу занимает около 30 секунд, всего принято 738 решений.</p>
+        <dl class="gauges">
+          <div><dt>Найдено каналов</dt><dd>7&nbsp;879</dd></div>
+          <div><dt>Проанализировано видео</dt><dd>77&nbsp;976</dd></div>
+          <div><dt>Отсеяно автоматически</dt><dd>2&nbsp;545</dd></div>
+          <div><dt>Отправлено на ручную проверку</dt><dd>1&nbsp;898</dd></div>
+          <div><dt>Ручных решений</dt><dd>738</dd></div>
+          <div><dt>Время на решение</dt><dd>~30&nbsp;с</dd></div>
+        </dl>
+        <p class="case-note">Данные рабочей базы с сентября по ноябрь 2026 года.</p>
+        <p class="scribble scribble-code"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M50 36 C30 34 14 26 10 6 M4 14 L10 4 L17 12"/></svg>код приватный, покажу на созвоне</p>
+      </div>
+    </section>
+
+    <div class="hatch" aria-hidden="true"></div>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="shell contact-inner">
+        <div class="contact-text">
+          <h2 id="contact-title">Нужно что&#8209;то похожее?</h2>
+          <p class="contact-lead">Беру проекты и открыт к работе в команде. Расскажу, как устроен NightScout, и покажу код на созвоне.</p>
+          <p class="mail-line">Почта <a href="mailto:ilalatorcev@gmail.com" translate="no">ilalatorcev@gmail.com</a>
+            <button class="copy" type="button" id="copy-mail" data-mail="ilalatorcev@gmail.com" hidden>Скопировать</button>
+            <span class="copy-status" role="status" id="copy-status"></span></p>
+          <ul class="contact-buttons">
+            <li><a class="btn btn-amber" href="https://t.me/TribalSM">Telegram</a></li>
+            <li><a class="btn" href="mailto:ilalatorcev@gmail.com">Почта</a></li>
+            <li><a class="btn" href="https://vk.ru/ilya_latorcev">ВКонтакте</a></li>
+            <li><a class="btn" href="https://github.com/tribalsm">GitHub</a></li>
+          </ul>
+          <p class="scribble"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M50 36 C30 34 14 26 10 6 M4 14 L10 4 L17 12"/></svg>отвечаю в течение дня</p>
+        </div>
+        <figure class="contact-art" aria-hidden="true">
+          <svg viewBox="0 0 320 240" class="ill">
+            <line x1="10" y1="220" x2="310" y2="220"/>
+            <rect x="10" y="220" width="300" height="12" fill="url(#dots)" stroke="none"/>
+            <rect x="154" y="128" width="12" height="92" class="ill-fill"/>
+            <path d="M90 128 V84 a40 40 0 0 1 40 -40 H190 a40 40 0 0 1 40 40 V128 Z" class="ill-fill"/>
+            <path d="M190 44 a40 40 0 0 1 40 40 V128"/>
+            <line x1="112" y1="100" x2="168" y2="100"/>
+            <rect x="104" y="72" width="70" height="16" rx="2" fill="url(#dots-amber)" stroke="none" opacity=".8"/>
+            <path d="M108 70 h60 v20 h-60 Z M108 70 l30 12 l30 -12"/>
+            <line x1="236" y1="112" x2="236" y2="48"/>
+            <path d="M236 48 h40 v22 h-40" fill="url(#hatch-amber)"/>
+            <circle cx="236" cy="112" r="4" class="ill-fill"/>
+          </svg>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="end">
+    <div class="shell end-inner">
+      <figure class="end-art" aria-hidden="true">
+        <svg viewBox="0 0 320 180" class="ill">
+          <path d="M40 176 L140 40 M280 176 L180 40"/>
+          <path d="M160 176 V150 M160 136 V112 M160 98 V80 M160 68 V56"/>
+          <rect x="96" y="62" width="128" height="22" fill="url(#hatch-amber)" stroke="none"/>
+          <rect x="96" y="62" width="128" height="22"/>
+          <line x1="106" y1="84" x2="106" y2="118"/><line x1="214" y1="84" x2="214" y2="118"/>
+          <path d="M248 150 a26 26 0 0 1 52 0"/>
+          <line x1="274" y1="150" x2="258" y2="134" class="accent-stroke" stroke-width="2.4"/>
+          <text x="246" y="166" class="ill-text">E</text><text x="294" y="166" class="ill-text">F</text>
+        </svg>
+      </figure>
+      <div class="end-text">
+        <p class="end-title">Конец маршрута. Бензин ещё есть?</p>
+        <p>Можно вернуться к карте проектов или заглянуть в открытые репозитории.</p>
+        <ul class="end-links">
+          <li><a class="text-link" href="/">К карте проектов</a></li>
+          <li><a class="text-link" href="/#projects">Все проекты</a></li>
+          <li><a class="text-link" href="https://github.com/tribalsm?tab=repositories">Репозитории на GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="shell end-bottom"><a class="brand" href="/" translate="no"><i class="mark" aria-hidden="true"></i>TRIBALCORE</a><span>Илья Латорцев, 2026</span></div>
+  </footer>
+
+  <script src="/assets/site.js" defer></script>
+</body>
+</html>

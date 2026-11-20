@@ -1,0 +1,16 @@
+{% extends "tribalcore_base.html" %}
+{% block title %}Вход в NightScout{% endblock %}
+{% block content %}
+<section class="login-card" aria-labelledby="login-title">
+  <p class="eyebrow"><span class="signal"></span> Приватная панель</p>
+  <h1 id="login-title">NightScout</h1>
+  <p>Войдите с действующей учётной записью NightScout.</p>
+  {% if failed %}<p class="login-error" role="alert">Неверные данные входа.</p>{% endif %}
+  <form method="post" action="{{ url_for('login') }}">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label>Логин<input name="username" required maxlength="64" autocomplete="username" spellcheck="false"></label>
+    <label>Пароль<input name="password" type="password" required maxlength="256" autocomplete="current-password"></label>
+    <button type="submit" class="btn btn-amber">Войти <span aria-hidden="true">↗</span></button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+# Files are deployed to Linux as-is: keep LF line endings in the working copy.
+* text=auto eol=lf
+*.webp binary
+*.jpg binary
+*.png binary
+*.mp4 binary
+*.glb binary
+*.woff2 binary
