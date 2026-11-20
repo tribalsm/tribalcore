@@ -1,0 +1,45 @@
+  body { margin: 0; background: #f4f1ec; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2328; }
+  .demo-bar { background: #1f2328; color: #f4f1ec; font-size: 13px; line-height: 1.45; padding: 10px 16px; text-align: center; }
+  .demo-bar a { color: #ffd27a; }
+
+  /* ---- Всё ниже — сам блок калькулятора. Стили с префиксом kc-, чтобы его можно было вставить в Tilda (блок T123) ---- */
+  .kc { --kc-accent: #2f6f5e; --kc-accent-ink: #fff; --kc-line: #ddd6cc; --kc-muted: #6b6560; --kc-card: #fff; --kc-soft: #f7f4ef;
+        max-width: 720px; margin: 24px auto; padding: 0 16px; box-sizing: border-box; }
+  .kc *, .kc *::before, .kc *::after { box-sizing: border-box; }
+  .kc h1 { font-size: 26px; line-height: 1.2; margin: 0 0 6px; }
+  .kc .kc-lead { color: var(--kc-muted); margin: 0 0 20px; font-size: 15px; }
+  .kc .kc-card { background: var(--kc-card); border: 1px solid var(--kc-line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .kc .kc-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .kc .kc-item-head h2 { font-size: 17px; margin: 0; }
+  .kc .kc-remove { background: none; border: 0; color: var(--kc-muted); font-size: 14px; cursor: pointer; text-decoration: underline; padding: 4px; }
+  .kc label.kc-l { display: block; font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+  .kc select, .kc input[type=text], .kc input[type=tel], .kc input[type=number] {
+        width: 100%; font: inherit; font-size: 16px; padding: 11px 12px; border: 1px solid var(--kc-line); border-radius: 10px; background: #fff; color: inherit; }
+  .kc select:focus, .kc input:focus { outline: 2px solid var(--kc-accent); outline-offset: 1px; border-color: var(--kc-accent); }
+  .kc .kc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .kc .kc-row.kc-one { grid-template-columns: 1fr; }
+  .kc .kc-seg { display: inline-flex; border: 1px solid var(--kc-line); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .kc .kc-seg button { font: inherit; font-size: 14px; border: 0; background: #fff; padding: 9px 14px; cursor: pointer; color: inherit; }
+  .kc .kc-seg button[aria-pressed=true] { background: var(--kc-accent); color: var(--kc-accent-ink); }
+  .kc .kc-opts { display: grid; gap: 8px; }
+  .kc .kc-opt { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; padding: 8px 10px; border-radius: 10px; background: var(--kc-soft); cursor: pointer; }
+  .kc .kc-opt input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--kc-accent); flex: none; }
+  .kc .kc-opt small { display: block; color: var(--kc-muted); font-size: 13px; }
+  .kc .kc-item-sum { margin-top: 12px; font-size: 15px; color: var(--kc-muted); }
+  .kc .kc-item-sum b { color: #1f2328; }
+  .kc .kc-add { width: 100%; font: inherit; font-size: 15px; padding: 12px; border: 1px dashed var(--kc-accent); color: var(--kc-accent); background: transparent; border-radius: 12px; cursor: pointer; margin-bottom: 14px; }
+  .kc .kc-total { background: var(--kc-accent); color: var(--kc-accent-ink); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .kc .kc-total .kc-big { font-size: 30px; font-weight: 700; margin: 2px 0 8px; }
+  .kc .kc-total ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; opacity: .95; }
+  .kc .kc-total .kc-note { font-size: 13px; opacity: .85; margin: 10px 0 0; }
+  .kc .kc-submit { width: 100%; font: inherit; font-size: 17px; font-weight: 600; padding: 14px; border: 0; border-radius: 12px; background: #1f2328; color: #fff; cursor: pointer; }
+  .kc .kc-submit:disabled { opacity: .5; cursor: not-allowed; }
+  .kc .kc-err { color: #b42318; font-size: 13px; margin: 6px 0 0; min-height: 1em; }
+  .kc .kc-sent { display: none; }
+  .kc .kc-sent.kc-show { display: block; }
+  .kc .kc-tg { background: #e9f3fb; border: 1px solid #c7def0; border-radius: 12px; padding: 14px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; }
+  .kc .kc-fine { font-size: 12px; color: var(--kc-muted); margin-top: 10px; }
+  @media (max-width: 480px) { .kc h1 { font-size: 22px; } .kc #kc-form .kc-row { grid-template-columns: 1fr; } .kc .kc-total .kc-big { font-size: 26px; } }
+  /* Бывшие style-атрибуты (CSP сайта запрещает inline-стили) */
+  .kc .kc-sent-title { font-size: 17px; margin: 0 0 6px; }
+  .kc .kc-sent-fine { margin: 0 0 10px; }

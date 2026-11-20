@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Калькулятор стирки ковров — пример</title>
+<link rel="stylesheet" href="/demo/kovrochist/style.css">
+</head>
+<body>
+
+<div class="demo-bar">
+  Пример для обсуждения. Сделан по открытому прайсу сайта tomskiikovrochist.ru, заявки из этой страницы никуда не отправляются.
+  Автор: <a href="https://tribalcore.bond" target="_blank" rel="noopener">TRIBALCORE</a>
+</div>
+
+<div class="kc" id="kc">
+  <h1>Сколько стоит стирка ковра</h1>
+  <p class="kc-lead">Укажите размер и материал — посчитаем стоимость с доставкой. Оставьте заявку, мы перезвоним и согласуем время.</p>
+
+  <div id="kc-items"></div>
+  <button type="button" class="kc-add" id="kc-add">+ Добавить ещё ковёр</button>
+
+  <div class="kc-card">
+    <label class="kc-l" for="kc-delivery">Доставка (забрать и привезти обратно)</label>
+    <select id="kc-delivery">
+      <option value="city">По Томску — 700 ₽</option>
+      <option value="far">Пригород — по договорённости</option>
+    </select>
+  </div>
+
+  <div class="kc-total" aria-live="polite">
+    <div>Итого</div>
+    <div class="kc-big" id="kc-total">—</div>
+    <ul id="kc-breakdown"></ul>
+    <p class="kc-note" id="kc-note"></p>
+  </div>
+
+  <form class="kc-card" id="kc-form" novalidate>
+    <div class="kc-row">
+      <div><label class="kc-l" for="kc-name">Имя</label><input id="kc-name" type="text" autocomplete="name"></div>
+      <div><label class="kc-l" for="kc-phone">Телефон</label><input id="kc-phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></div>
+    </div>
+    <div class="kc-row">
+      <div><label class="kc-l" for="kc-addr">Адрес или район</label><input id="kc-addr" type="text" autocomplete="street-address"></div>
+      <div><label class="kc-l" for="kc-time">Когда удобно забрать</label><input id="kc-time" type="text" placeholder="например, завтра после 18:00"></div>
+    </div>
+    <button type="submit" class="kc-submit" id="kc-submit">Оформить заявку</button>
+    <p class="kc-err" id="kc-err"></p>
+    <p class="kc-fine">Предоплату не берём. Стирка 2–5 дней. Работаем ежедневно с 10:00 до 20:00.</p>
+  </form>
+
+  <div class="kc-card kc-sent" id="kc-sent">
+    <h2 class="kc-sent-title">Так заявка придёт владельцу в Telegram</h2>
+    <p class="kc-fine kc-sent-fine">В демо сообщение не отправляется. На рабочем сайте оно приходит в Telegram за секунду.</p>
+    <div class="kc-tg" id="kc-tg"></div>
+  </div>
+</div>
+
+<script src="/demo/kovrochist/app.js"></script>
+</body>
+</html>
