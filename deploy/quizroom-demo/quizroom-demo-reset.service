@@ -1,0 +1,7 @@
+# Installed as /etc/systemd/system/quizroom-demo-reset.service; run daily by quizroom-demo-reset.timer.
+[Unit]
+Description=Reset QuizRoom demo data
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /opt/quizroom-demo/reset.sh

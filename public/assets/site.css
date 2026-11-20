@@ -36,6 +36,7 @@
 .c-meeting { --c: #b9a3ff; --x: .74; --y: .72; --mx: .26; --my: .60; }
 .c-quizroom { --c: #6fd6c8; --x: .90; --y: .84; --mx: .74; --my: .74; }
 .c-trader { --c: #7fb8ff; }
+.c-blocks { --c: #d8c9a8; }
 .c-mail { --c: #ffd9a0; --x: .48; --y: .84; --mx: .50; --my: .92; }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -154,7 +155,7 @@ p { text-wrap: pretty; }
     radial-gradient(circle, var(--line-strong) 3.5px, transparent 4px) 40px 50% / 14px 14px no-repeat, var(--panel); }
 .shot-frame img, .shot-frame video { display: block; width: 100%; height: auto; }
 .shot-frame video { aspect-ratio: 16 / 9; }
-.project-links { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.project-links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
 /* About */
 .about { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.35fr); gap: 25px; align-items: start; }
 .about-text p { max-width: 62ch; color: var(--dim); }
@@ -205,7 +206,7 @@ a.shot-frame:hover { border-color: var(--c, var(--amber)); transform: translateY
 .principles h3 { font-size: clamp(20px, 2vw, 25px); line-height: 1.2; letter-spacing: -.02em; }
 .principles p { margin: 10px 0 14px; color: var(--dim); }
 /* «Для студий»: four offers, each tied to the project that proves it, then how a first task starts. */
-.offers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px clamp(18px, 3vw, 40px); margin-top: 30px; }
+.offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px clamp(18px, 3vw, 40px); margin-top: 30px; }
 .offers article { padding-top: 16px; border-top: 2px solid var(--c); }
 .offers h3 { font-size: clamp(20px, 2vw, 25px); line-height: 1.2; letter-spacing: -.02em; }
 .offers p { margin-top: 10px; color: var(--dim); }
@@ -215,6 +216,13 @@ a.shot-frame:hover { border-color: var(--c, var(--amber)); transform: translateY
 .studio-steps li { position: relative; padding: 46px 0 0; border-top: 1px dashed var(--line); color: var(--dim); counter-increment: step; }
 .studio-steps li::before { content: counter(step); position: absolute; top: 12px; left: 0; display: grid; place-items: center; width: 26px; height: 26px; border: 2px solid var(--amber); border-radius: 50%; color: var(--amber); font: 500 13px var(--mono); }
 .studio-cta { margin-top: 30px; }
+.studio-sub { max-width: 62ch; margin-top: 16px; color: var(--paper); font-size: clamp(17px, 1.9vw, 21px); line-height: 1.35; }
+.studio-sub + .section-lead { margin-top: 10px; }
+.price-list { max-width: 760px; margin: 14px 0 0; }
+.price-list div { display: flex; justify-content: space-between; align-items: baseline; gap: 6px 24px; padding-block: 10px; border-top: 1px dashed var(--line); }
+.price-list dt { color: var(--dim); }
+.price-list dd { margin: 0; color: var(--amber); font: 500 15px var(--mono); white-space: nowrap; }
+.price-note { max-width: 760px; margin-top: 14px; color: var(--dim); }
 .stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 26px; }
 .stack > div { padding-top: 12px; border-top: 1px solid var(--line); }
 .stack h3 { margin-bottom: 12px; font-size: 17px; font-weight: 600; }
@@ -269,7 +277,11 @@ input:focus-visible, select:focus-visible { outline-offset: 1px; }
 .route-copy code { color: var(--paper); font: .92em var(--mono); font-variant-ligatures: none; }
 .case-frame .frame-box.is-shot img { aspect-ratio: auto; object-fit: contain; }
 .case-frame video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 4px; background: var(--night); }
-.case-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 14px 0 0; padding: 0; list-style: none; }
+/* The poster also sits behind the video, so a frame shows even where the video itself is not drawn
+   (power-saving modes, page screenshot tools). */
+video.demo-video { background: var(--night) url("/assets/quizroom-demo-poster.webp") center / contain no-repeat; }
+.case-links { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; color: var(--dim); }
+.case-links code { color: var(--paper); font: .92em var(--mono); font-variant-ligatures: none; overflow-wrap: anywhere; }
 .readout { min-width: 0; margin: 0; padding: 8px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); font-size: 14px; }
 .readout div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; padding-block: 7px; }
 .readout div + div { border-top: 1px dashed var(--line); }
@@ -321,7 +333,7 @@ mark { padding: 0 .2em; border-radius: 3px; background: var(--amber); color: var
   .contact-art { max-width: 300px; }
   .end-art { max-width: 260px; }
   .principles, .stack { grid-template-columns: minmax(0, 1fr); }
-  .studio-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .studio-steps, .offers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .case-hero, .split, .route li { grid-template-columns: minmax(0, 1fr); }
   .gauges { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -365,4 +377,4 @@ mark { padding: 0 .2em; border-radius: 3px; background: var(--amber); color: var
 .scene.is-3d .scene-canvas { display: none; }
 .scene.is-3d { background: #070c1c; }
 @media (max-width: 560px) { .offers, .studio-steps { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 560px) { .top nav a.nav-wide { display: none; } }
+@media (max-width: 1000px) { .top nav a.nav-wide { display: none; } }

@@ -1,0 +1,10 @@
+# Installed as /etc/systemd/system/quizroom-demo-reset.timer.
+[Unit]
+Description=Reset QuizRoom demo data every night
+
+[Timer]
+OnCalendar=*-*-* 04:30:00 Europe/Moscow
+Persistent=true
+
+[Install]
+WantedBy=timers.target

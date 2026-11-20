@@ -1,0 +1,49 @@
+diff --git a/server/index.js b/server/index.js
+index 51a318f..c65cdeb 100644
+--- a/server/index.js
++++ b/server/index.js
+@@ -15,6 +15,7 @@ const io = new Server(server, {
+ io.use(socketAuth);
+ attachRealtime(io);
+ 
+-server.listen(port, () => {
++// HOST lets a public deployment keep the app on localhost behind a proxy.
++server.listen(port, process.env.HOST || undefined, () => {
+   console.log(`QuizRoom server: http://localhost:${port}`);
+ });
+diff --git a/server/realtime.js b/server/realtime.js
+index d57d823..1fd0be5 100644
+--- a/server/realtime.js
++++ b/server/realtime.js
+@@ -27,6 +27,22 @@ function makeRoomCode() {
+   throw new Error("Не удалось создать код комнаты");
+ }
+ 
++// Optional caps for a public demo: rooms that are still open (created in the last 3 hours and not
++// finished) and rooms created per day. Unset means no limit.
++function roomLimitError() {
++  const maxOpen = Number(process.env.MAX_OPEN_ROOMS) || 0;
++  const maxDaily = Number(process.env.MAX_ROOMS_PER_DAY) || 0;
++  if (maxOpen) {
++    const open = db.prepare("SELECT COUNT(*) AS n FROM quiz_sessions WHERE status != 'FINISHED' AND created_at > datetime('now', '-3 hours')").get().n;
++    if (open >= maxOpen) return "Сейчас открыто слишком много комнат. Попробуйте позже или завершите свою прошлую игру";
++  }
++  if (maxDaily) {
++    const today = db.prepare("SELECT COUNT(*) AS n FROM quiz_sessions WHERE created_at > datetime('now', '-1 day')").get().n;
++    if (today >= maxDaily) return "Лимит комнат на сегодня исчерпан. Демо обновляется раз в сутки";
++  }
++  return "";
++}
++
+ function roomState(session) {
+   const players = db.prepare(`
+     SELECT u.id, u.name, sp.score FROM session_players sp
+@@ -156,6 +172,8 @@ export function attachRealtime(io) {
+       const quiz = getQuizWithQuestions(Number(quizId), true);
+       if (!quiz || quiz.organizerId !== user.id) return respond(ack, { error: "Квиз не найден" });
+       if (!quiz.questions.length) return respond(ack, { error: "Добавьте хотя бы один вопрос" });
++      const limitError = roomLimitError();
++      if (limitError) return respond(ack, { error: limitError });
+ 
+       const code = makeRoomCode();
+       const result = db.prepare("INSERT INTO quiz_sessions (quiz_id, room_code) VALUES (?, ?)").run(quiz.id, code);

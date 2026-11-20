@@ -1,0 +1,24 @@
+# Public QuizRoom demo (demo.tribalcore.bond). Installed as /etc/systemd/system/quizroom-demo.service.
+# Listens on 127.0.0.1:3101 only; nginx proxies to it. Data lives in /var/lib/quizroom-demo.
+# Runs on its own Node 22 in /opt/quizroom-demo/node (better-sqlite3 has no prebuilt binary for the system Node 20).
+[Unit]
+Description=QuizRoom public demo
+After=network.target
+
+[Service]
+User=quizroom
+Group=quizroom
+WorkingDirectory=/opt/quizroom-demo/app
+EnvironmentFile=/etc/quizroom-demo.env
+ExecStart=/opt/quizroom-demo/node/bin/node server/index.js
+Restart=on-failure
+RestartSec=3
+MemoryMax=300M
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/quizroom-demo /opt/quizroom-demo/app/uploads /opt/quizroom-demo/app/data
+
+[Install]
+WantedBy=multi-user.target
