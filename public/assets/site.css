@@ -204,6 +204,17 @@ a.shot-frame:hover { border-color: var(--c, var(--amber)); transform: translateY
 .principles article { padding-top: 18px; border-top: 2px solid var(--line-strong); }
 .principles h3 { font-size: clamp(20px, 2vw, 25px); line-height: 1.2; letter-spacing: -.02em; }
 .principles p { margin: 10px 0 14px; color: var(--dim); }
+/* «Для студий»: four offers, each tied to the project that proves it, then how a first task starts. */
+.offers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px clamp(18px, 3vw, 40px); margin-top: 30px; }
+.offers article { padding-top: 16px; border-top: 2px solid var(--c); }
+.offers h3 { font-size: clamp(20px, 2vw, 25px); line-height: 1.2; letter-spacing: -.02em; }
+.offers p { margin-top: 10px; color: var(--dim); }
+.offers .offer-proof { color: var(--c); font: 500 13px/1.9 var(--mono); }
+.steps-title { margin-top: clamp(36px, 5vw, 56px); font-size: 17px; font-weight: 600; }
+.studio-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin: 14px 0 0; padding: 0; list-style: none; counter-reset: step; }
+.studio-steps li { position: relative; padding: 46px 0 0; border-top: 1px dashed var(--line); color: var(--dim); counter-increment: step; }
+.studio-steps li::before { content: counter(step); position: absolute; top: 12px; left: 0; display: grid; place-items: center; width: 26px; height: 26px; border: 2px solid var(--amber); border-radius: 50%; color: var(--amber); font: 500 13px var(--mono); }
+.studio-cta { margin-top: 30px; }
 .stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 26px; }
 .stack > div { padding-top: 12px; border-top: 1px solid var(--line); }
 .stack h3 { margin-bottom: 12px; font-size: 17px; font-weight: 600; }
@@ -310,6 +321,7 @@ mark { padding: 0 .2em; border-radius: 3px; background: var(--amber); color: var
   .contact-art { max-width: 300px; }
   .end-art { max-width: 260px; }
   .principles, .stack { grid-template-columns: minmax(0, 1fr); }
+  .studio-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .case-hero, .split, .route li { grid-template-columns: minmax(0, 1fr); }
   .gauges { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -352,3 +364,5 @@ mark { padding: 0 .2em; border-radius: 3px; background: var(--amber); color: var
 .scene.is-3d .scene-dark { display: block; }
 .scene.is-3d .scene-canvas { display: none; }
 .scene.is-3d { background: #070c1c; }
+@media (max-width: 560px) { .offers, .studio-steps { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .top nav a.nav-wide { display: none; } }
