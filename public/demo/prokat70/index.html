@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Онлайн-бронь инструмента — пример</title>
+<link rel="stylesheet" href="/demo/prokat70/style.css">
+</head>
+<body>
+
+<div class="demo-bar">
+  Пример для обсуждения. Сделан по открытым ценам и правилам сайта prokat-70.ru, в демо только часть каталога, заявки никуда не отправляются.
+  Автор: <a href="https://tribalcore.bond" target="_blank" rel="noopener">TRIBALCORE</a>
+</div>
+
+<div class="pb">
+  <h1>Забронировать инструмент онлайн</h1>
+  <p class="pb-lead">Выберите инструмент, пункт выдачи и время. Мы проверим наличие и перезвоним, чтобы подтвердить бронь.</p>
+
+  <div class="pb-card">
+    <p class="pb-step">1. Инструмент</p>
+    <div class="pb-row pb-stack">
+      <div><label class="pb-l" for="pb-cat">Раздел</label><select id="pb-cat"></select></div>
+      <div><label class="pb-l" for="pb-tool">Инструмент</label><select id="pb-tool"></select></div>
+    </div>
+    <div class="pb-tool-info" id="pb-tool-info"></div>
+  </div>
+
+  <div class="pb-card">
+    <p class="pb-step">2. Где и когда</p>
+    <div class="pb-row pb-one">
+      <div><label class="pb-l" for="pb-point">Пункт выдачи</label>
+        <select id="pb-point">
+          <option value="alt">ул. Алтайская, 173/1</option>
+          <option value="ver">проезд Вершинина, 8</option>
+          <option value="sol">пер. Соляной, 11А</option>
+        </select></div>
+    </div>
+    <div class="pb-row">
+      <div><label class="pb-l" for="pb-date">Дата получения</label><input id="pb-date" type="date"></div>
+      <div><label class="pb-l" for="pb-time">Время</label><select id="pb-time"></select></div>
+    </div>
+    <p class="pb-err" id="pb-date-err"></p>
+
+    <label class="pb-l">Тариф</label>
+    <div class="pb-tariffs" id="pb-tariffs">
+      <label class="pb-tariff"><input type="radio" name="pb-t" value="day" checked><span>Посуточно<small>сутки — 24 часа с момента выдачи</small></span></label>
+      <label class="pb-tariff" id="pb-t-night"><input type="radio" name="pb-t" value="night"><span>Ночной — скидка 50%<small>с 18:00 до 10:00 следующего дня</small></span></label>
+      <label class="pb-tariff"><input type="radio" name="pb-t" value="h3"><span>3 часа — скидка 50%<small>ровно 3 часа с момента оформления</small></span></label>
+    </div>
+    <div class="pb-row pb-one" id="pb-days-row">
+      <div><label class="pb-l" for="pb-days">Сколько суток</label><input id="pb-days" type="number" min="1" max="30" value="1" inputmode="numeric"></div>
+    </div>
+  </div>
+
+  <div class="pb-total" aria-live="polite">
+    <div>При получении</div>
+    <div class="pb-big" id="pb-sum">—</div>
+    <ul id="pb-lines"></ul>
+    <p class="pb-note" id="pb-note"></p>
+  </div>
+
+  <form class="pb-card" id="pb-form" novalidate>
+    <p class="pb-step">3. Контакты</p>
+    <div class="pb-row pb-stack">
+      <div><label class="pb-l" for="pb-name">Имя</label><input id="pb-name" type="text" autocomplete="name"></div>
+      <div><label class="pb-l" for="pb-phone">Телефон</label><input id="pb-phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></div>
+    </div>
+    <div class="pb-row pb-one">
+      <div><label class="pb-l" for="pb-comment">Комментарий (необязательно)</label><input id="pb-comment" type="text" placeholder="например, нужна насадка SDS-max"></div>
+    </div>
+    <button type="submit" class="pb-submit">Отправить заявку на бронь</button>
+    <p class="pb-err" id="pb-err"></p>
+    <p class="pb-fine">Бронь подтверждается звонком. С собой — паспорт РФ с томской пропиской. Аренда и залог оплачиваются при получении, залог возвращается. Доставки нет. Выдача: пн–пт 9:00–19:00, сб до 17:00, вс — выходной.</p>
+  </form>
+
+  <div class="pb-card pb-sent" id="pb-sent">
+    <h2 class="pb-sent-title">Так заявка придёт сотруднику пункта</h2>
+    <p class="pb-fine pb-sent-fine">В демо сообщение не отправляется. На рабочем сайте оно приходит в Telegram или ВКонтакте за секунду, в том числе ночью и в воскресенье.</p>
+    <div class="pb-msg" id="pb-msg"></div>
+  </div>
+</div>
+
+<script src="/demo/prokat70/app.js"></script>
+</body>
+</html>

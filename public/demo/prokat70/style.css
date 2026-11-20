@@ -1,0 +1,40 @@
+  body { margin: 0; background: #f2f2ee; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #1f2328; }
+  .demo-bar { background: #1f2328; color: #f4f1ec; font-size: 13px; line-height: 1.45; padding: 10px 16px; text-align: center; }
+  .demo-bar a { color: #ffd27a; }
+
+  /* ---- Блок брони. Стили с префиксом pb-, чтобы его можно было вставить на сайт WordPress отдельным HTML-блоком ---- */
+  .pb { --pb-accent: #c2410c; --pb-line: #dcdcd4; --pb-muted: #66665f; --pb-soft: #f6f6f2;
+        max-width: 720px; margin: 24px auto; padding: 0 16px; box-sizing: border-box; }
+  .pb *, .pb *::before, .pb *::after { box-sizing: border-box; }
+  .pb h1 { font-size: 26px; line-height: 1.2; margin: 0 0 6px; }
+  .pb .pb-lead { color: var(--pb-muted); margin: 0 0 20px; font-size: 15px; }
+  .pb .pb-card { background: #fff; border: 1px solid var(--pb-line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .pb .pb-step { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--pb-accent); margin: 0 0 10px; }
+  .pb label.pb-l { display: block; font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+  .pb select, .pb input[type=text], .pb input[type=tel], .pb input[type=date], .pb input[type=number] {
+        width: 100%; font: inherit; font-size: 16px; padding: 11px 12px; border: 1px solid var(--pb-line); border-radius: 10px; background: #fff; color: inherit; }
+  .pb select:focus, .pb input:focus { outline: 2px solid var(--pb-accent); outline-offset: 1px; border-color: var(--pb-accent); }
+  .pb .pb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .pb .pb-row:last-child { margin-bottom: 0; }
+  .pb .pb-one { grid-template-columns: 1fr; }
+  .pb .pb-tool-info { font-size: 14px; color: var(--pb-muted); margin-top: 8px; }
+  .pb .pb-tool-info b { color: #1f2328; }
+  .pb .pb-tariffs { display: grid; gap: 8px; margin-bottom: 14px; }
+  .pb .pb-tariff { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: var(--pb-soft); border: 1px solid transparent; cursor: pointer; font-size: 15px; }
+  .pb .pb-tariff input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--pb-accent); flex: none; }
+  .pb .pb-tariff small { display: block; color: var(--pb-muted); font-size: 13px; }
+  .pb .pb-tariff.pb-off { opacity: .45; cursor: not-allowed; }
+  .pb .pb-total { background: #1f2328; color: #fff; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .pb .pb-total .pb-big { font-size: 28px; font-weight: 700; margin: 2px 0 8px; }
+  .pb .pb-total ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; }
+  .pb .pb-total .pb-note { font-size: 13px; opacity: .8; margin: 10px 0 0; }
+  .pb .pb-submit { width: 100%; font: inherit; font-size: 17px; font-weight: 600; padding: 14px; border: 0; border-radius: 12px; background: var(--pb-accent); color: #fff; cursor: pointer; }
+  .pb .pb-err { color: #b42318; font-size: 13px; margin: 6px 0 0; min-height: 1em; }
+  .pb .pb-fine { font-size: 12px; color: var(--pb-muted); margin-top: 10px; line-height: 1.5; }
+  .pb .pb-sent { display: none; }
+  .pb .pb-sent.pb-show { display: block; }
+  .pb .pb-msg { background: #eef3fb; border: 1px solid #cddcf0; border-radius: 12px; padding: 14px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; }
+  @media (max-width: 480px) { .pb h1 { font-size: 22px; } .pb .pb-row.pb-stack { grid-template-columns: 1fr; } .pb .pb-total .pb-big { font-size: 24px; } }
+  /* Бывшие style-атрибуты (CSP сайта запрещает inline-стили) */
+  .pb .pb-sent-title { font-size: 17px; margin: 0 0 6px; }
+  .pb .pb-sent-fine { margin: 0 0 10px; }
