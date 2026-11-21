@@ -13,21 +13,73 @@
   <div class="workspace-tools">
     <span id="sync" role="status"></span>
     <button class="btn btn-small" type="button" id="refresh" hidden>Обновить <span aria-hidden="true">↻</span></button>
-    <a class="btn btn-amber" href="{{ url_for('.continue_review') }}">Продолжить проверку</a>
+    <a class="btn {{ 'btn-amber' if not channel }}" id="continue" href="{{ url_for('.continue_review') }}">Продолжить проверку{% if not channel %} <kbd>Пробел</kbd>{% endif %}</a>
   </div>
 </header>
+{% set stats = session_review_stats %}
+<section class="progress-strip" aria-label="Прогресс проверки">
+  <div class="strip-item">
+    <span class="strip-label">В очереди</span>
+    <strong id="strip-queue">{{ "{:,}".format(progress.queue).replace(",", " ") }}</strong>
+  </div>
+  <div class="strip-item strip-ai">
+    <span class="strip-label">Нейронка</span>
+    <span><strong>{{ "{:,}".format(progress.analyzed).replace(",", " ") }}</strong> оценено · ждут {{ "{:,}".format(progress.waiting).replace(",", " ") }}</span>
+    <progress max="100" value="{{ progress.analyzed_share }}" aria-label="Оценено нейронкой: {{ progress.analyzed_share }}%">{{ progress.analyzed_share }}%</progress>
+  </div>
+  <div class="strip-item">
+    <span class="strip-label">Мой сеанс{% if stats %} · с {{ (stats.started_at|tomsk_time)[11:16] }}{% endif %}</span>
+    {% if stats %}
+      <span class="strip-session">
+        <b class="ok" title="Одобрено">✓ {{ stats.channels.accepted }}</b>
+        <b class="no" title="Отклонено">✗ {{ stats.channels.rejected }}</b>
+        <b title="Пропущено">⤼ {{ stats.channels.other }}</b>
+        <time id="session-time" data-started="{{ stats.started_at }}"></time>
+      </span>
+    {% else %}<span class="strip-muted">недоступен</span>{% endif %}
+  </div>
+  <div class="strip-item">
+    <span class="strip-label">Сегодня</span>
+    <strong>{{ progress.today }}</strong>
+  </div>
+  <div class="strip-tools">
+    <label class="autoopen"><input type="checkbox" id="autoopen" checked> Автооткрытие YouTube</label>
+    <form method="post" action="{{ url_for('.new_session') }}">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <input type="hidden" name="back" value="{{ request.path }}">
+      <button class="btn btn-small" type="submit" title="Обнулить счётчик «Мой сеанс». Решения останутся в истории.">Новый сеанс</button>
+    </form>
+    <button class="btn btn-small" type="button" id="hotkeys-open" aria-haspopup="dialog" title="Горячие клавиши">?</button>
+  </div>
+</section>
 {% set messages = get_flashed_messages() %}
-{% if messages %}
+{% if messages or undo %}
   <div class="notice" role="status">
-    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+    <div>{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>
     {% if undo %}
-      <form method="post" action="{{ url_for('.undo_review') }}">
+      <form method="post" action="{{ url_for('.undo_review') }}" id="undo-form"
+            {% if undo.channel_id %}data-youtube="https://www.youtube.com/channel/{{ undo.channel_id|urlencode }}"{% endif %}>
         <input type="hidden" name="csrf" value="{{ csrf }}">
-        <button class="btn btn-small" type="submit">Отменить решение</button>
+        <button class="btn btn-small" type="submit">Отменить решение{% if not messages %} по «{{ undo.title }}»{% endif %} <kbd>Z</kbd></button>
       </form>
     {% endif %}
   </div>
 {% endif %}
+<dialog id="hotkeys" aria-labelledby="hotkeys-title">
+  <h2 id="hotkeys-title">Горячие клавиши</h2>
+  <dl class="hotkey-list">
+    <div><dt><kbd>A</kbd></dt><dd>Одобрить канал</dd></div>
+    <div><dt><kbd>R</kbd></dt><dd>Отклонить канал</dd></div>
+    <div><dt><kbd>S</kbd></dt><dd>Пропустить канал</dd></div>
+    <div><dt><kbd>Z</kbd></dt><dd>Отменить последнее решение</dd></div>
+    <div><dt><kbd>Пробел</kbd></dt><dd>Открыть канал на YouTube (в очереди — начать проверку)</dd></div>
+    <div><dt><kbd>?</kbd></dt><dd>Показать или скрыть эту подсказку</dd></div>
+    <div><dt><kbd>Esc</kbd></dt><dd>Убрать курсор из поля, чтобы клавиши снова работали</dd></div>
+  </dl>
+  <p>Клавиши работают в любой раскладке и не срабатывают, пока курсор стоит в поле ввода.</p>
+  <p>С включённым «Автооткрытием» после решения следующий канал сразу открывается в той же вкладке YouTube. Он заранее закреплён за вами, другим проверяющим его не выдадут.</p>
+  <form method="dialog"><button class="btn btn-small">Закрыть</button></form>
+</dialog>
 <div class="workspace">
   <section class="queue" aria-labelledby="queue-title">
     <h2 id="queue-title">Каналы</h2>
@@ -40,7 +92,8 @@
       {% include "tribalcore_queue.html" %}
     </div>
   </section>
-  <section class="detail" aria-labelledby="detail-title">
+  <section class="detail" aria-labelledby="detail-title"
+    {% if channel %}data-youtube="{{ youtube }}"{% if next_youtube %} data-next-youtube="{{ next_youtube }}"{% endif %}{% endif %}>
     {% if channel %}
       {% set assignment = channel.assignment %}
       <a class="back text-link" href="{{ url_for('.index', **params) }}">← К очереди</a>
@@ -49,7 +102,7 @@
           <p class="eyebrow">{{ channel.channel_handle or channel.channel_id }}</p>
           <h2 id="detail-title">{{ channel.channel_name or channel.channel_id }}</h2>
         </div>
-        <a class="btn btn-small" href="https://www.youtube.com/channel/{{ channel.channel_id|urlencode }}" target="_blank" rel="noopener noreferrer">YouTube <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-small" id="open-youtube" href="https://www.youtube.com/channel/{{ channel.channel_id|urlencode }}" target="nightscout-youtube" rel="noopener noreferrer">YouTube <span aria-hidden="true">↗</span> <kbd>Пробел</kbd></a>
       </div>
       <dl class="facts">
         <div><dt>AI-оценка</dt><dd>{{ channel.display_nightscout_score or 'Нет оценки' }}</dd></div>
@@ -83,7 +136,7 @@
           </ul>
         {% else %}<p>Для этого канала нет карточек видео.</p>{% endif %}
       </div>
-      {% if assignment and assignment.state == 'queued' and channel.manual_status == 'pending_review' %}
+      {% if reviewable %}
         <form class="review-form" id="channel-review" method="post" action="{{ url_for('.review') }}">
           <h3>Решение проверяющего</h3>
           {# Enter in a text field must not trigger the first decision button. #}
@@ -91,6 +144,7 @@
           <input type="hidden" name="csrf" value="{{ csrf }}">
           <input type="hidden" name="assignment" value="{{ assignment.id }}">
           <input type="hidden" name="version" value="{{ assignment.version }}">
+          <input type="hidden" name="next" value="{{ next_channel or '' }}">
           <label>Категория
             <select name="category" autocomplete="off" required>
               {% for category in categories %}<option{% if category == assignment.category %} selected{% endif %}>{{ category }}</option>{% endfor %}
@@ -99,9 +153,10 @@
           <label>Причина отклонения <span>(по желанию)</span><input name="reason" autocomplete="off" maxlength="240"></label>
         </form>
         <div class="decision-buttons" role="group" aria-label="Действия по каналу">
-          <button class="btn btn-amber" form="channel-review" type="submit" name="decision" value="suitable">Одобрить</button>
-          <button class="btn reject" form="channel-review" type="submit" name="decision" value="unsuitable">Отклонить</button>
-          <button class="btn" form="channel-review" type="submit" name="decision" value="later">Пропустить</button>
+          <button class="btn btn-amber" form="channel-review" type="submit" name="decision" value="suitable" data-code="KeyA">Одобрить <kbd>A</kbd></button>
+          <button class="btn reject" form="channel-review" type="submit" name="decision" value="unsuitable" data-code="KeyR">Отклонить <kbd>R</kbd></button>
+          <button class="btn" form="channel-review" type="submit" name="decision" value="later" data-code="KeyS">Пропустить <kbd>S</kbd></button>
+          <span class="next-hint">{% if next_channel %}Дальше: следующий канал уже закреплён за вами{% else %}Это последний доступный канал в очереди{% endif %}</span>
         </div>
       {% elif channel.manual_action %}
         <p class="notice">{{ decisions.get(channel.manual_action.decision, 'Проверен') }}</p>

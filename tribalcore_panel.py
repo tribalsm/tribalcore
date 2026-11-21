@@ -2,6 +2,7 @@
 
 import re
 from contextlib import closing
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -28,6 +29,14 @@ MACHINE = {
 }
 PAGE_SIZE = 25
 UNDO_KEY = "tribalcore_undo"
+TOMSK = timezone(timedelta(hours=7))
+CHANNEL_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
+# How many queue candidates to try when reserving the next channel in advance.
+NEXT_TRIES = 3
+
+
+def youtube_channel(channel_id):
+    return f"https://www.youtube.com/channel/{channel_id}"
 
 
 def register_panel(app, *, site_host="tribalcore.bond", local_preview=False):
@@ -110,27 +119,67 @@ def register_panel(app, *, site_host="tribalcore.bond", local_preview=False):
         uid = g.user["id"]
         counts = {name: store.listing(uid, name, count=True) for name in SCOPES}
         items, total = listing(uid, params, counts)
-        worker, analyzed = None, None
-        if g.user["role"] == "owner":
-            with CandidateDatabase(store.path).readonly_session() as connection:
+        worker = None
+        with CandidateDatabase(store.path).readonly_session() as connection:
+            if g.user["role"] == "owner":
                 latest = connection.execute("""
                     SELECT status, started_at, finished_at
                     FROM night_worker_runs
                     ORDER BY started_at DESC
                     LIMIT 1
                 """).fetchone()
-                analyzed = connection.execute("""
-                    SELECT COUNT(DISTINCT channel_id)
-                    FROM channel_analysis_runs
-                    WHERE provider = 'gateway' AND analysis_mode = 'frames' AND status = 'completed'
-                """).fetchone()[0]
-            worker = dict(latest) if latest is not None else {}
+                worker = dict(latest) if latest is not None else {}
+            # Shared progress, the same for every reviewer.
+            analyzed = connection.execute("""
+                SELECT COUNT(DISTINCT channel_id)
+                FROM channel_analysis_runs
+                WHERE provider = 'gateway' AND analysis_mode = 'frames' AND status = 'completed'
+            """).fetchone()[0]
+            waiting = connection.execute(
+                "SELECT COUNT(*) FROM channels WHERE status = 'analysis_pending'"
+            ).fetchone()[0]
         return {
             "items": items, "scopes": SCOPES, "counts": counts, "params": params,
             "total": total, "pages": max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE),
             "worker": worker, "analyzed": analyzed, "decisions": DECISIONS,
             "undo": session.get(UNDO_KEY),
+            "progress": {
+                "queue": counts["queue"], "analyzed": analyzed, "waiting": waiting,
+                "analyzed_share": round(100 * analyzed / (analyzed + waiting)) if analyzed + waiting else 100,
+                "today": decided_today(uid),
+            },
         }
+
+    def decided_today(uid):
+        """Channels this reviewer decided since midnight in Tomsk, undone decisions excluded."""
+        midnight = datetime.now(TOMSK).replace(hour=0, minute=0, second=0, microsecond=0)
+        since = midnight.astimezone(timezone.utc).isoformat()
+        with closing(store.connect()) as connection:
+            return connection.execute("""
+                SELECT COUNT(DISTINCT p.channel_id) FROM mr_proposals p
+                WHERE p.reviewer_id = ? AND p.created_at >= ?
+                AND p.decision IN ('suitable', 'unsuitable', 'later')
+                AND NOT EXISTS (SELECT 1 FROM mr_events e WHERE e.proposal_id = p.id
+                    AND e.action IN ('proposal_undone', 'confirmation_undone'))
+            """, (uid, since)).fetchone()[0]
+
+    def reserve_next(uid, current):
+        """Reserve the channel after `current` for this reviewer, so it can open in YouTube
+        the moment a decision is made and no other reviewer gets the same channel."""
+        for _ in range(NEXT_TRIES):
+            # Same request-local snapshot the queue counters already built, so this costs nothing extra.
+            with closing(store.connect()) as connection:
+                pool = store.pool(connection, uid)
+            candidates = [row["channel_id"] for row in pool if row["channel_id"] != current]
+            if not candidates:
+                return None
+            try:
+                store.claim(uid, candidates[0])
+                return candidates[0]
+            except Conflict:
+                # Taken a moment ago or no longer reviewable: drop the request-local snapshot and retry.
+                getattr(g, "shared_pool", {}).clear()
+        return None
 
     @panel.get("")
     @panel.get("/")
@@ -161,18 +210,37 @@ def register_panel(app, *, site_host="tribalcore.bond", local_preview=False):
             video["title"] = titles.get(video_id) or video.get("title")
             if not video.get("youtube_url") and re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id or ""):
                 video["youtube_url"] = f"https://www.youtube.com/watch?v={video_id}"
+        page = context()
+        assignment = channel.get("assignment")
+        reviewable = bool(assignment and assignment["state"] == "queued"
+                          and channel.get("manual_status") == "pending_review")
+        next_channel = reserve_next(g.user["id"], channel_id) if reviewable else None
         return render_template(
-            "tribalcore_panel.html", **context(), channel=channel, machine=MACHINE,
-            reason_view=reason_view, categories=CATEGORIES,
+            "tribalcore_panel.html", **page, channel=channel, machine=MACHINE,
+            reason_view=reason_view, categories=CATEGORIES, reviewable=reviewable,
+            youtube=youtube_channel(channel_id), next_channel=next_channel,
+            next_youtube=youtube_channel(next_channel) if next_channel else None,
         )
 
-    def channel_title(aid):
+    def assignment_channel(aid):
         with closing(store.connect()) as connection:
             row = connection.execute(
                 "SELECT c.channel_id, c.channel_name FROM mr_assignments a "
                 "JOIN channels c ON c.channel_id = a.channel_id WHERE a.id = ?", (aid,),
             ).fetchone()
-        return (row["channel_name"] or row["channel_id"]) if row else "Канал"
+        if not row:
+            return None, "Канал"
+        return row["channel_id"], row["channel_name"] or row["channel_id"]
+
+    def next_destination(uid, wanted):
+        """The channel reserved on the previous card, if it is still this reviewer's; else the queue."""
+        if wanted and CHANNEL_ID.fullmatch(wanted):
+            try:
+                store.claim(uid, wanted)
+                return url_for(".channel_detail", channel_id=wanted)
+            except Conflict:
+                pass
+        return url_for(".continue_review")
 
     @panel.post("/review")
     def review():
@@ -184,18 +252,29 @@ def register_panel(app, *, site_host="tribalcore.bond", local_preview=False):
             abort(400)
         pid = store.submit(g.user["id"], aid, version, decision, category,
                            reason=request.form.get("reason", "").strip()[:240])
-        title = channel_title(aid)
+        decided, title = assignment_channel(aid)
         session.pop(UNDO_KEY, None)
         # The canonical store reverses only the owner's own finalized verdicts.
         if decision != "later" and g.user["role"] == "owner":
-            session[UNDO_KEY] = {"pid": pid, "title": title}
+            session[UNDO_KEY] = {"pid": pid, "title": title, "channel_id": decided}
         flash({
             "suitable": f"«{title}» одобрен. Решение сохранено в NightScout.",
             "unsuitable": f"«{title}» отклонён.",
             "later": f"«{title}» отложен для вас и доступен другим проверяющим.",
         }[decision])
-        # Start a fresh read after the canonical transaction commits.
-        return redirect(url_for(".continue_review"), code=303)
+        # Start a fresh read after the canonical transaction commits: straight to the channel
+        # reserved on this card (the one YouTube already shows), or the queue if it is gone.
+        return redirect(next_destination(g.user["id"], request.form.get("next", "")), code=303)
+
+    @panel.post("/session/new")
+    def new_session():
+        # The deployed app's own reset redirects to its old UI, which this site does not serve.
+        session["review_statistics_anchor"] = store.review_session_snapshot(g.user["id"])
+        flash("Начат новый сеанс подсчёта. Все решения остались в истории.")
+        back = request.form.get("back", "")
+        if not (back == "/nightscout" or back.startswith("/nightscout/")):
+            back = url_for(".index")  # only ever return inside the panel
+        return redirect(back, code=303)
 
     @panel.post("/undo")
     def undo_review():

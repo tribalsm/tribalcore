@@ -89,3 +89,70 @@ div.notice form { margin: 0; }
   .decision-buttons { position: static; }
   html:has(.decision-buttons) { scroll-padding-bottom: 0; }
 }
+
+/* ---- Keyboard labels --------------------------------------------------------------------- */
+kbd { display: inline-block; min-width: 1.6em; padding: 1px 5px; border: 1px solid var(--control-line); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); color: var(--dim); font: 500 11px/1.4 var(--mono); text-align: center; }
+.btn kbd { margin-left: 2px; }
+.btn-amber kbd { background: transparent; border-color: currentColor; color: inherit; opacity: .75; }
+
+/* ---- Progress strip: pinned to the top while scrolling ----------------------------------- */
+.progress-strip {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+  margin-bottom: 12px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  font-size: 13px;
+}
+.strip-item { display: grid; gap: 1px; min-width: 0; }
+.strip-label { color: var(--dim); font: 11px/1.4 var(--mono); white-space: nowrap; }
+.strip-item strong { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.strip-ai > span:not(.strip-label) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.strip-ai progress { width: 100%; min-width: 120px; height: 4px; appearance: none; border: 0; border-radius: 2px; background: var(--raised); overflow: hidden; }
+.strip-ai progress::-webkit-progress-bar { background: var(--raised); }
+.strip-ai progress::-webkit-progress-value { background: var(--accent); }
+.strip-ai progress::-moz-progress-bar { background: var(--accent); }
+.strip-session { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-variant-numeric: tabular-nums; }
+.strip-session b { font-weight: 650; font-size: 15px; }
+.strip-session .ok { color: #9be3b0; }
+.strip-session .no { color: #ffb7a7; }
+.strip-session time, .strip-muted { color: var(--dim); font-size: 12px; }
+.strip-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto; }
+.strip-tools form { margin: 0; }
+.autoopen { display: inline-flex; align-items: center; gap: 6px; color: var(--dim); font-size: 12px; cursor: pointer; }
+.autoopen input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+/* ---- Decision area ----------------------------------------------------------------------- */
+.next-hint { flex-basis: 100%; color: var(--dim); font-size: 12px; }
+#channel-review.is-busy + .decision-buttons .btn { opacity: .6; pointer-events: none; }
+
+/* ---- Hotkey help ------------------------------------------------------------------------- */
+#hotkeys { width: min(440px, calc(100% - 32px)); padding: 20px 22px; border: 1px solid var(--control-line); border-radius: 10px; background: var(--surface); color: inherit; }
+#hotkeys::backdrop { background: rgba(5, 9, 20, .65); }
+#hotkeys h2 { font-size: 22px; margin-bottom: 12px; }
+#hotkeys p { color: var(--dim); font-size: 13px; margin: 10px 0; }
+.hotkey-list { display: grid; gap: 6px; margin: 0; }
+.hotkey-list div { display: grid; grid-template-columns: 76px 1fr; align-items: baseline; gap: 10px; }
+.hotkey-list dd { margin: 0; font-size: 14px; }
+
+@media (max-width: 850px) {
+  .progress-strip { gap: 8px 16px; }
+  .strip-tools { margin-left: 0; flex-basis: 100%; }
+}
+@media (max-width: 530px) {
+  .progress-strip { position: static; padding: 8px 10px; }
+  .strip-ai { flex-basis: 100%; }
+  .decision-buttons kbd { display: none; }
+  .next-hint { display: none; }
+}
+@media (hover: none) {
+  /* Touch screens have no keyboard: keep the labels out of the way. */
+  .btn kbd, #hotkeys-open { display: none; }
+}

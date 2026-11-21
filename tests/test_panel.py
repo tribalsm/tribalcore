@@ -160,6 +160,65 @@ def test_owner_can_undo_last_decision(setup):
     assert again.status_code == 303 and again.location == "/nightscout/"
 
     reviewer, _ = login(app, "reviewer")
-    skip = proposal(reviewer, "UC_demo_travel", category, "later")
+    # The owner's card view reserved the next channel for the owner, so the reviewer takes theirs from /continue.
+    start = get(reviewer, "/nightscout/continue")
+    assert start.status_code == 302 and start.location.startswith("/nightscout/channel/")
+    skip = proposal(reviewer, start.location.rsplit("/", 1)[1], category, "later")
     assert reviewer.post("/nightscout/review", base_url=BASE, data=skip).status_code == 303
     assert "Отменить решение".encode() not in get(reviewer, "/nightscout/").data
+
+
+def test_decision_opens_reserved_next_channel(setup):
+    app, _, category = setup
+    client, _ = login(app)
+    card = get(client, "/nightscout/channel/UC_demo_river")
+    assert "Мой сеанс".encode() in card.data and "Сегодня</span>\n    <strong>0".encode() in card.data
+    reserved = field(card, "next")
+    assert reserved != "UC_demo_river"
+    assert f'data-next-youtube="https://www.youtube.com/channel/{reserved}"'.encode() in card.data
+    for code in (b"KeyA", b"KeyR", b"KeyS"):
+        assert b'data-code="' + code + b'"' in card.data
+
+    # The reserved channel is held for this reviewer only.
+    other, _ = login(app, "reviewer")
+    assert reserved.encode() not in get(other, "/nightscout/queue").data
+
+    data = {name: field(card, name) for name in ("csrf", "assignment", "version")}
+    saved = client.post("/nightscout/review", base_url=BASE,
+                        data={**data, "category": category, "decision": "suitable", "next": reserved})
+    assert saved.status_code == 303 and saved.location == "/nightscout/channel/" + reserved
+    landed = get(client, saved.location)
+    assert landed.status_code == 200 and b'id="channel-review"' in landed.data
+    assert "Сегодня</span>\n    <strong>1".encode() in landed.data
+    assert b'class="ok" title="\xd0\x9e\xd0\xb4\xd0\xbe\xd0\xb1\xd1\x80\xd0\xb5\xd0\xbd\xd0\xbe">\xe2\x9c\x93 1' in landed.data
+
+
+def test_bad_next_falls_back_to_continue(setup):
+    app, _, category = setup
+    client, _ = login(app)
+    for wanted in ("../../login", "https://evil.example/x", "a" * 65):
+        card = get(client, "/nightscout/channel/UC_demo_lens")
+        if b'id="channel-review"' not in card.data:
+            break
+        data = {name: field(card, name) for name in ("csrf", "assignment", "version")}
+        saved = client.post("/nightscout/review", base_url=BASE,
+                            data={**data, "category": category, "decision": "later", "next": wanted})
+        assert saved.status_code == 303 and saved.location == "/nightscout/continue"
+
+
+def test_new_session_resets_counter_and_stays_on_panel(setup):
+    app, _, category = setup
+    client, _ = login(app)
+    approve = proposal(client, "UC_demo_river", category, "suitable")
+    assert client.post("/nightscout/review", base_url=BASE, data=approve).status_code == 303
+    page = get(client, "/nightscout/")
+    assert "✓ 1".encode() in page.data
+    for back, expected in (("/nightscout/channel/UC_demo_lens", "/nightscout/channel/UC_demo_lens"),
+                           ("https://evil.example/", "/nightscout/"), ("//evil.example", "/nightscout/"),
+                           ("/login", "/nightscout/")):
+        reset = client.post("/nightscout/session/new", base_url=BASE, data={"csrf": field(page, "csrf"), "back": back})
+        assert reset.status_code == 303 and reset.location == expected
+    assert client.post("/nightscout/session/new", base_url=BASE, data={"csrf": "wrong"}).status_code == 400
+    fresh = get(client, "/nightscout/")
+    assert "✓ 0".encode() in fresh.data and "Начат новый сеанс".encode() in fresh.data
+    assert "Сегодня</span>\n    <strong>1".encode() in fresh.data  # today keeps counting

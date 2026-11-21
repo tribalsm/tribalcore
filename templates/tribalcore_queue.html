@@ -1,4 +1,4 @@
-<div class="metrics" aria-label="Статистика обработки">
+<div class="metrics" aria-label="Статистика обработки" data-queue="{{ counts.queue }}">
   <div><span>На проверке</span><strong>{{ counts.queue }}</strong></div>
   <div><span>Одобрено</span><strong>{{ counts.approved }}</strong></div>
   {% if analyzed is not none %}<div><span>Проанализировано</span><strong>{{ analyzed }}</strong></div>{% endif %}
